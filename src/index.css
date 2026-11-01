@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes confetti-fall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+@keyframes slide-in-from-right {
+  0% { transform: translateX(100%); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.15); }
+  50% { box-shadow: 0 0 30px rgba(16, 185, 129, 0.3); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-in { animation-fill-mode: both; }
+.slide-in-from-right { animation-name: slide-in-from-right; }
+.duration-300 { animation-duration: 300ms; }
+
+html {
+  -webkit-tap-highlight-color: transparent;
+  background: #dde2dc;
+}
+
+body {
+  font-family: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  background: #dde2dc;
+  color: #1b221e;
+  font-size: 15px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Qiymət, başlıq və rəqəmlər üçün enli, qalın qrotesk */
+.font-display {
+  font-family: 'Archivo', 'IBM Plex Sans', system-ui, sans-serif;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Yol xətti: sürücü blokunun altında tək dekorativ detal */
+.road-dash {
+  height: 4px;
+  background-image: repeating-linear-gradient(90deg, #ffc61a 0 18px, transparent 18px 32px);
+  opacity: 0.9;
+}
+
+:focus-visible {
+  outline: 2px solid #ffc61a;
+  outline-offset: 2px;
+}
+input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offset: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* Glassmorphism scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(100, 116, 139, 0.5); }
+
+/* Glass card base */
+.glass-card {
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(30, 41, 59, 0.8);
+  border-radius: 1rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* Glass input base */
+.glass-input {
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(51, 65, 85, 0.6);
+  color: #fff;
+}
+
+.glass-input::placeholder { color: #64748b; }
+
+/* Emerald CTA glow */
+.emerald-glow {
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.2);
+}
+.emerald-glow:hover {
+  box-shadow: 0 6px 30px rgba(16, 185, 129, 0.35);
+}
+
+/* Amber badge glow */
+.amber-glow {
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.15);
+}
+
+/* Indigo badge glow */
+.indigo-glow {
+  box-shadow: 0 0 12px rgba(99, 102, 241, 0.15);
+}
+
+/* Skeleton shimmer */
+.skeleton-shimmer {
+  background: linear-gradient(90deg, rgba(30, 41, 59, 0.4) 25%, rgba(51, 65, 85, 0.6) 50%, rgba(30, 41, 59, 0.4) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}

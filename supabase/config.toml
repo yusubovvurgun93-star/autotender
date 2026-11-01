@@ -1,0 +1,6 @@
+# Edge Function-lar öz gizli açarları ilə qorunur (JWT yox), ona görə JWT yoxlaması söndürülüb.
+[functions.telegram-webhook]
+verify_jwt = false
+
+[functions.telegram-notify]
+verify_jwt = false
