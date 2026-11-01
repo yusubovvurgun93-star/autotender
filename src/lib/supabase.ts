@@ -25,11 +25,11 @@ export const BRAND_ALL = 'Bütün markalar';
 
 export const URGENCY_CONFIG: Record<
   string,
-  { label: string; shortLabel: string; hours: number; icon: string }
+  { label: string; shortLabel: string; hours: number }
 > = {
-  express: { label: '1 saat (ekspres)', shortLabel: '1 saat', hours: 1, icon: '⚡' },
-  standard: { label: '6 saat (bu gün)', shortLabel: '6 saat', hours: 6, icon: '🕒' },
-  wide: { label: '24 saat (geniş axtarış)', shortLabel: '24 saat', hours: 24, icon: '📅' },
+  express: { label: '1 saat (ekspres)', shortLabel: '1 saat', hours: 1 },
+  standard: { label: '6 saat (bu gün)', shortLabel: '6 saat', hours: 6 },
+  wide: { label: '24 saat (geniş axtarış)', shortLabel: '24 saat', hours: 24 },
 };
 
 export const CONDITION_LABELS: Record<string, string> = {
@@ -48,34 +48,34 @@ export const GRADE_COLORS: Record<string, string> = {
 };
 
 export const CATEGORIES = [
-  { key: 'oil', label: 'Yağdəyişmə və filtrlər', short: 'Yağ', icon: '🛢️' },
-  { key: 'aggregate', label: 'Aqreqat (mühərrik, karopka)', short: 'Aqreqat', icon: '⚙️' },
-  { key: 'body', label: 'Kuzov / işıqlandırma', short: 'Kuzov', icon: '🚗' },
-  { key: 'electrical', label: 'Elektrik / sensor', short: 'Elektrik', icon: '⚡' },
-  { key: 'wheel', label: 'Təkər / əyləc / asqı', short: 'Təkər', icon: '🛞' },
-  { key: 'accessory', label: 'Aksesuar / qulluq', short: 'Aksesuar', icon: '✨' },
+  { key: 'oil', label: 'Yağdəyişmə və filtrlər', short: 'Yağ' },
+  { key: 'aggregate', label: 'Aqreqat (mühərrik, karopka)', short: 'Aqreqat' },
+  { key: 'body', label: 'Kuzov / işıqlandırma', short: 'Kuzov' },
+  { key: 'electrical', label: 'Elektrik / sensor', short: 'Elektrik' },
+  { key: 'wheel', label: 'Təkər / əyləc / asqı', short: 'Təkər' },
+  { key: 'accessory', label: 'Aksesuar / qulluq', short: 'Aksesuar' },
 ] as const;
 
 /** Usta / servis xidmət növləri (server: valid_service_categories) */
 export const SERVICE_CATEGORIES = [
-  { key: 'diagnostics', label: 'Diaqnostika / kompüter', short: 'Diaqnostika', icon: '🔍' },
-  { key: 'engine', label: 'Mühərrik / karopka təmiri', short: 'Mühərrik', icon: '⚙️' },
-  { key: 'chassis', label: 'Ayaq hissəsi (asqı) / əyləc / sükan', short: 'Asqı', icon: '🛞' },
-  { key: 'electrical', label: 'Avto elektrik', short: 'Elektrik', icon: '⚡' },
-  { key: 'body', label: 'Kuzov / boya / rixtovka', short: 'Kuzov', icon: '🚗' },
-  { key: 'ac', label: 'Kondisioner / soyuducu', short: 'Kondisioner', icon: '❄️' },
-  { key: 'tires', label: 'Təkər / balans / montaj', short: 'Təkər', icon: '🛞' },
-  { key: 'maintenance', label: 'Yağ / texniki baxış', short: 'Texniki', icon: '🛢️' },
-  { key: 'detailing', label: 'Yuyulma / polirovka / kimyəvi', short: 'Detailing', icon: '✨' },
-  { key: 'towing', label: 'Evakuator / yol yardımı', short: 'Evakuator', icon: '🚚' },
+  { key: 'diagnostics', label: 'Diaqnostika / kompüter', short: 'Diaqnostika' },
+  { key: 'engine', label: 'Mühərrik / karopka təmiri', short: 'Mühərrik' },
+  { key: 'chassis', label: 'Ayaq hissəsi (asqı) / əyləc / sükan', short: 'Asqı' },
+  { key: 'electrical', label: 'Avto elektrik', short: 'Elektrik' },
+  { key: 'body', label: 'Kuzov / boya / rixtovka', short: 'Kuzov' },
+  { key: 'ac', label: 'Kondisioner / soyuducu', short: 'Kondisioner' },
+  { key: 'tires', label: 'Təkər / balans / montaj', short: 'Təkər' },
+  { key: 'maintenance', label: 'Yağ / texniki baxış', short: 'Texniki' },
+  { key: 'detailing', label: 'Yuyulma / polirovka / kimyəvi', short: 'Detailing' },
+  { key: 'towing', label: 'Evakuator / yol yardımı', short: 'Evakuator' },
 ] as const;
 
 export const CITIES = ['Bakı', 'Sumqayıt', 'Gəncə', 'Mingəçevir', 'Lənkəran', 'Şəki', 'Naxçıvan', 'Digər'] as const;
 
 export const PROVIDER_TYPES = [
-  { key: 'shop', label: 'Mağaza', icon: '🏪' },
-  { key: 'service_center', label: 'Servis', icon: '🔧' },
-  { key: 'master', label: 'Usta', icon: '👨‍🔧' },
+  { key: 'shop', label: 'Mağaza' },
+  { key: 'service_center', label: 'Servis' },
+  { key: 'master', label: 'Usta' },
 ] as const;
 
 export const PROVIDER_PREFS = [

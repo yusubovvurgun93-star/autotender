@@ -2,116 +2,245 @@
 @tailwind components;
 @tailwind utilities;
 
-@keyframes confetti-fall {
-  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+:root {
+  --green: #0b4635;
+  --green-2: #13694f;
+  --yellow: #ffc61a;
+  --ink: #0f2a21;
+  --paper: #eef3ef;
 }
-
-@keyframes slide-in-from-right {
-  0% { transform: translateX(100%); opacity: 0; }
-  100% { transform: translateX(0); opacity: 1; }
-}
-
-@keyframes glow-pulse {
-  0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.15); }
-  50% { box-shadow: 0 0 30px rgba(16, 185, 129, 0.3); }
-}
-
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-.animate-in { animation-fill-mode: both; }
-.slide-in-from-right { animation-name: slide-in-from-right; }
-.duration-300 { animation-duration: 300ms; }
 
 html {
   -webkit-tap-highlight-color: transparent;
-  background: #dde2dc;
+  background: #d9e1db;
 }
 
 body {
   font-family: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  background: #dde2dc;
-  color: #1b221e;
+  background: #d9e1db;
+  color: var(--ink);
   font-size: 15px;
   line-height: 1.45;
   -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
 }
 
-/* Qiymət, başlıq və rəqəmlər üçün enli, qalın qrotesk */
-.font-display {
-  font-family: 'Archivo', 'IBM Plex Sans', system-ui, sans-serif;
-  letter-spacing: -0.01em;
-  font-variant-numeric: tabular-nums;
-}
-
-/* Yol xətti: sürücü blokunun altında tək dekorativ detal */
-.road-dash {
-  height: 4px;
-  background-image: repeating-linear-gradient(90deg, #ffc61a 0 18px, transparent 18px 32px);
-  opacity: 0.9;
-}
 
 :focus-visible {
-  outline: 2px solid #ffc61a;
+  outline: 2px solid var(--yellow);
   outline-offset: 2px;
 }
-input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offset: 0; }
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none;
 }
 
-/* Glassmorphism scrollbar */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Heç bir yerdə yana sürüşdürmə olmasın */
+html,
+body,
+#root {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+/* Qiymət, başlıq və rəqəmlər üçün enli, qalın qrotesk (@apply ilə istifadə oluna bilsin deyə utilities qatında) */
+@layer utilities {
+  .font-display {
+    font-family: 'Archivo', 'IBM Plex Sans', system-ui, sans-serif;
+    letter-spacing: -0.015em;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer components {
+  /* Tətbiq fonu: yumşaq yaşıl və sarı işıq ləkələri */
+  .app-bg {
+    background:
+      radial-gradient(70% 38% at 100% 0%, rgba(19, 105, 79, 0.2), transparent 70%),
+      radial-gradient(60% 34% at 0% 14%, rgba(255, 198, 26, 0.22), transparent 70%),
+      var(--paper);
+  }
+
+  /* Şüşə səth: yalnız üzən elementlər üçün (başlıq, alt menyu, pəncərə) */
+  .glass {
+    background: rgba(255, 255, 255, 0.7);
+    -webkit-backdrop-filter: blur(20px) saturate(1.7);
+    backdrop-filter: blur(20px) saturate(1.7);
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    box-shadow:
+      0 12px 32px -14px rgba(11, 70, 53, 0.4),
+      0 0 0 1px rgba(15, 42, 33, 0.05);
+  }
+
+  .glass-dark {
+    background: rgba(11, 70, 53, 0.82);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    backdrop-filter: blur(20px) saturate(1.5);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 16px 36px -14px rgba(11, 70, 53, 0.6);
+  }
+
+  .card {
+    @apply relative overflow-hidden bg-white rounded-3xl p-4;
+    box-shadow:
+      0 0 0 1px rgba(15, 42, 33, 0.05),
+      0 14px 30px -18px rgba(11, 70, 53, 0.32);
+  }
+
+  .panel {
+    @apply overflow-hidden bg-white rounded-3xl;
+    box-shadow:
+      0 0 0 1px rgba(15, 42, 33, 0.05),
+      0 14px 30px -18px rgba(11, 70, 53, 0.32);
+  }
+
+  .card-flat {
+    @apply rounded-2xl bg-[#F4F7F4] p-3;
+  }
+
+  .label {
+    @apply block text-xs font-semibold text-slate-500 mb-1.5;
+  }
+
+  /* 16px: iOS-da fokus zamanı yaxınlaşma olmasın */
+  .input {
+    @apply w-full rounded-2xl bg-[#F4F7F4] px-3.5 py-3 text-slate-900 placeholder:text-slate-400 transition;
+    font-size: 16px;
+    border: 1.5px solid transparent;
+  }
+  .input:focus {
+    background: #fff;
+    border-color: var(--green);
+    box-shadow: 0 0 0 4px rgba(11, 70, 53, 0.1);
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center rounded-2xl font-display font-bold transition active:scale-[0.97] disabled:opacity-60 disabled:active:scale-100;
+  }
+  .btn-primary {
+    @apply btn text-white px-4 py-3 text-sm;
+    background: linear-gradient(135deg, var(--green-2), var(--green));
+    box-shadow: 0 10px 20px -10px rgba(11, 70, 53, 0.7);
+  }
+  .btn-cta {
+    @apply btn px-4 py-3.5 text-sm;
+    color: var(--ink);
+    background: linear-gradient(180deg, #ffd34d, var(--yellow));
+    box-shadow:
+      0 10px 22px -10px rgba(255, 198, 26, 0.95),
+      inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  }
+  .btn-soft {
+    @apply btn px-4 py-2.5 text-[13px];
+    color: var(--green);
+    background: rgba(11, 70, 53, 0.08);
+  }
+  .btn-ghost {
+    @apply btn px-4 py-2.5 text-[13px] text-slate-600 bg-white;
+    box-shadow: 0 0 0 1.5px rgba(15, 42, 33, 0.1);
+  }
+  .btn-danger {
+    @apply btn px-4 py-2.5 text-[13px] text-rose-600 bg-rose-50;
+  }
+
+  .tag {
+    @apply inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold bg-[#EAF0EB] text-slate-600;
+  }
+  .tag-green {
+    @apply tag;
+    background: rgba(11, 70, 53, 0.1);
+    color: var(--green);
+  }
+  .tag-amber {
+    @apply tag bg-amber-100 text-amber-800;
+  }
+  .tag-rose {
+    @apply tag bg-rose-100 text-rose-700;
+  }
+  .tag-blue {
+    @apply tag bg-sky-100 text-sky-800;
+  }
+
+  /* Alt menyu: üzən şüşə lövhə */
+  .dock {
+    @apply fixed left-1/2 -translate-x-1/2 z-30 flex items-center justify-between gap-1 rounded-[28px] p-1.5;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    width: calc(100% - 24px);
+    max-width: 408px;
+  }
+  .dock-item {
+    @apply relative flex-1 flex flex-col items-center justify-center gap-0.5 rounded-[22px] py-2 text-[11px] font-semibold text-slate-500 transition;
+  }
+  .dock-item[aria-current='true'] {
+    color: #fff;
+    background: linear-gradient(135deg, var(--green-2), var(--green));
+    box-shadow: 0 8px 16px -8px rgba(11, 70, 53, 0.8);
+  }
+
+  /* Üfüqi sürüşdürmə əvəzinə: sətirlərə düzülən seçimlər */
+  .chips {
+    @apply flex flex-wrap gap-1.5;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.rise {
+  animation: rise 0.35s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes sheet-up {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.sheet-up {
+  animation: sheet-up 0.28s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+.skeleton {
+  background: linear-gradient(90deg, #e6ece7 25%, #f3f6f3 50%, #e6ece7 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 1.5rem;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
 ::-webkit-scrollbar-thumb {
   background: rgba(100, 116, 139, 0.3);
   border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover { background: rgba(100, 116, 139, 0.5); }
-
-/* Glass card base */
-.glass-card {
-  background: rgba(15, 23, 42, 0.8);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(30, 41, 59, 0.8);
-  border-radius: 1rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-}
-
-/* Glass input base */
-.glass-input {
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(51, 65, 85, 0.6);
-  color: #fff;
-}
-
-.glass-input::placeholder { color: #64748b; }
-
-/* Emerald CTA glow */
-.emerald-glow {
-  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.2);
-}
-.emerald-glow:hover {
-  box-shadow: 0 6px 30px rgba(16, 185, 129, 0.35);
-}
-
-/* Amber badge glow */
-.amber-glow {
-  box-shadow: 0 0 12px rgba(245, 158, 11, 0.15);
-}
-
-/* Indigo badge glow */
-.indigo-glow {
-  box-shadow: 0 0 12px rgba(99, 102, 241, 0.15);
-}
-
-/* Skeleton shimmer */
-.skeleton-shimmer {
-  background: linear-gradient(90deg, rgba(30, 41, 59, 0.4) 25%, rgba(51, 65, 85, 0.6) 50%, rgba(30, 41, 59, 0.4) 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
 }

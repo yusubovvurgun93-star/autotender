@@ -47,36 +47,35 @@ export function ProviderFields({
   };
 
   return (
-    <div className="space-y-2.5">
+    <div className="space-y-3">
       <div>
-        <label className="text-[11px] text-slate-500 mb-1 block font-medium">Siz kimsiniz? *</label>
+        <label className="label">Siz kimsiniz? *</label>
         <div className="grid grid-cols-3 gap-1.5">
           {PROVIDER_TYPES.map((p) => (
             <button
               type="button"
               key={p.key}
               onClick={() => setType(p.key)}
-              className={`py-2 rounded-lg border text-center transition-all ${
+              className={`py-3 rounded-2xl text-center transition active:scale-95 ${
                 value.providerType === p.key
-                  ? 'bg-[#FFC61A] border-[#FFC61A] text-[#1B1B12]'
-                  : 'bg-slate-50 border-slate-200 text-slate-600'
+                  ? 'bg-[#FFC61A] text-[#0F2A21] shadow-[0_8px_16px_-8px_rgba(255,198,26,0.95)]'
+                  : 'bg-[#F4F7F4] text-slate-600'
               }`}
             >
-              <div className="text-base leading-none">{p.icon}</div>
-              <div className="text-[11px] font-bold mt-1">{p.label}</div>
+              <div className="text-sm font-display font-bold">{p.label}</div>
             </button>
           ))}
         </div>
       </div>
 
       <div>
-        <label className="text-[11px] text-slate-500 mb-1 block font-medium">Nə təklif edirsiniz? *</label>
+        <label className="label">Nə təklif edirsiniz? *</label>
         <div className="flex gap-1.5 flex-wrap">
           <Chip tone="orange" active={hasParts} onClick={() => setOffering('parts')}>
-            🔩 Ehtiyat hissəsi satışı
+            Ehtiyat hissəsi satışı
           </Chip>
           <Chip tone="orange" active={hasService} onClick={() => setOffering('service')}>
-            🔧 Usta / servis xidməti
+            Usta / servis xidməti
           </Chip>
         </div>
       </div>
@@ -84,7 +83,7 @@ export function ProviderFields({
       {hasService && (
         <>
           <div>
-            <label className="text-[11px] text-slate-500 mb-1 block font-medium">Xidmət növləri *</label>
+            <label className="label">Xidmət növləri *</label>
             <div className="flex gap-1.5 flex-wrap">
               {SERVICE_CATEGORIES.map((c) => (
                 <Chip
@@ -93,13 +92,13 @@ export function ProviderFields({
                   active={value.serviceCategories.includes(c.key)}
                   onClick={() => onChange({ ...value, serviceCategories: toggle(value.serviceCategories, c.key) })}
                 >
-                  {c.icon} {c.short}
+                  {c.short}
                 </Chip>
               ))}
             </div>
           </div>
           <div>
-            <label className="text-[11px] text-slate-500 mb-1 block font-medium">Hansı şəhərlərdə? *</label>
+            <label className="label">Hansı şəhərlərdə? *</label>
             <div className="flex gap-1.5 flex-wrap">
               {CITIES.map((c) => (
                 <Chip
@@ -113,7 +112,7 @@ export function ProviderFields({
               ))}
             </div>
           </div>
-          <label className="flex items-start gap-2 text-[11px] text-slate-600 cursor-pointer">
+          <label className="flex items-start gap-2 text-sm text-slate-600 cursor-pointer">
             <input
               type="checkbox"
               checked={value.mobile}

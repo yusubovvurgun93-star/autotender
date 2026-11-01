@@ -1,42 +1,24 @@
 import { useState, type FormEvent, type ReactNode } from 'react';
-import { X } from 'lucide-react';
 import { BRAND_ALL, CATEGORIES } from '@/lib/supabase';
 import * as api from '@/lib/api';
 import { useSeller } from '@/lib/auth';
 import { normalizeAzPhone } from '@/lib/validate';
 import { showToast } from '@/lib/utils';
 import type { CarBrand, MyStore, ProviderProfileInput, StoreProfileInput } from '@/lib/types';
-import { Chip } from '@/components/ui';
+import { Chip, Sheet } from '@/components/ui';
 import { DEFAULT_PROVIDER, ProviderFields, validateProvider } from '@/components/Provider';
 
-const inputCls =
-  'w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-[#0B4635]';
+const inputCls = 'input';
 
 function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div>
-      <label className="text-[11px] text-slate-500 mb-0.5 block font-medium">{label}</label>
+      <label className="label">{label}</label>
       {children}
     </div>
   );
 }
 
-function Sheet({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
-  return (
-    <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center">
-      <div className="fixed inset-0 bg-black/60" onClick={onClose} />
-      <div className="relative w-full max-w-md max-h-[92vh] overflow-y-auto bg-white rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-bold text-slate-900">{title}</h3>
-          <button onClick={onClose} className="p-1 rounded-lg bg-slate-100 text-slate-500" aria-label="Bağla">
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-        {children}
-      </div>
-    </div>
-  );
-}
 
 function toggle(list: string[], v: string): string[] {
   return list.includes(v) ? list.filter((x) => x !== v) : [...list, v];
@@ -78,7 +60,7 @@ function ChipPickers({
           <div className="flex flex-wrap gap-1.5">
             {CATEGORIES.map((c) => (
               <Chip tone="orange" key={c.key} active={selCats.includes(c.key)} onClick={() => setSelCats(toggle(selCats, c.key))}>
-                {c.icon} {c.short}
+                {c.short}
               </Chip>
             ))}
           </div>
@@ -190,7 +172,7 @@ export function SellerAuthModal({
       title={mode === 'login' ? 'Satıcı girişi' : mode === 'register' ? 'Mağaza qeydiyyatı' : 'Parolu bərpa et'}
       onClose={onClose}
     >
-      <form onSubmit={submit} className="space-y-2.5">
+      <form onSubmit={submit} className="space-y-3">
         <Field label="E-poçt">
           <input
             type="email"
@@ -247,7 +229,7 @@ export function SellerAuthModal({
               showCats={provider.offerings.includes('parts')}
             />
             {(termsUrl || privacyUrl) && (
-              <label className="flex items-start gap-2 text-[11px] text-slate-600 cursor-pointer">
+              <label className="flex items-start gap-2 text-sm text-slate-600 cursor-pointer">
                 <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} className="mt-0.5" />
                 <span>
                   {termsUrl && (
@@ -265,40 +247,37 @@ export function SellerAuthModal({
                 </span>
               </label>
             )}
-            <p className="text-[10px] text-slate-400">
-              Qeydiyyatdan sonra 30 başlanğıc coin alırsınız. VÖEN və təsdiq (✓) admin tərəfindən yoxlanır.
-            </p>
           </>
         )}
 
         {error && (
-          <div className="rounded-lg bg-rose-50 border border-rose-200 px-3 py-2 text-[11px] text-rose-700">{error}</div>
+          <div className="rounded-2xl bg-rose-50 px-3.5 py-2.5 text-sm text-rose-700">{error}</div>
         )}
         {info && (
-          <div className="rounded-lg bg-emerald-50 border border-emerald-200 px-3 py-2 text-[11px] text-emerald-700">{info}</div>
+          <div className="rounded-2xl bg-emerald-50 px-3.5 py-2.5 text-sm text-emerald-700">{info}</div>
         )}
 
         <button
           type="submit"
           disabled={busy}
-          className="w-full py-3 bg-[#FFC61A] hover:bg-[#FFD24D] text-[#1B1B12] text-xs font-bold rounded-xl disabled:opacity-60 active:scale-95 transition-all"
+          className="btn-cta w-full"
         >
           {busy ? 'Gözləyin…' : mode === 'login' ? 'Daxil ol' : mode === 'register' ? 'Mağaza aç' : 'Link göndər'}
         </button>
 
-        <div className="flex items-center justify-between text-[11px] pt-1">
+        <div className="flex items-center justify-between text-sm pt-1">
           {mode === 'login' ? (
             <>
               <button type="button" className="text-slate-500 hover:text-slate-800" onClick={() => setMode('reset')}>
                 Parolu unutdum
               </button>
-              <button type="button" className="font-bold text-[#9A5B00]" onClick={() => setMode('register')}>
+              <button type="button" className="font-bold text-[#0B4635]" onClick={() => setMode('register')}>
                 Yeni mağaza aç
               </button>
             </>
           ) : (
-            <button type="button" className="font-bold text-[#9A5B00]" onClick={() => setMode('login')}>
-              ← Girişə qayıt
+            <button type="button" className="font-bold text-[#0B4635]" onClick={() => setMode('login')}>
+              Girişə qayıt
             </button>
           )}
         </div>
@@ -380,7 +359,7 @@ export function StoreProfileModal({
 
   return (
     <Sheet title={mode === 'create' ? 'Mağaza profilini tamamlayın' : 'Mağaza profili'} onClose={onClose}>
-      <form onSubmit={submit} className="space-y-2.5">
+      <form onSubmit={submit} className="space-y-3">
         <Field label="Mağaza adı *">
           <input value={name} onChange={(e) => setName(e.target.value)} className={inputCls} />
         </Field>
@@ -407,17 +386,17 @@ export function StoreProfileModal({
           showCats={provider.offerings.includes('parts')}
         />
         {mode === 'edit' && (
-          <p className="text-[10px] text-slate-400">Telefon və VÖEN-i dəyişmək üçün admin ilə əlaqə saxlayın.</p>
+          <p className="text-xs text-slate-400">Telefon və VÖEN-i dəyişmək üçün admin ilə əlaqə saxlayın.</p>
         )}
 
         {error && (
-          <div className="rounded-lg bg-rose-50 border border-rose-200 px-3 py-2 text-[11px] text-rose-700">{error}</div>
+          <div className="rounded-2xl bg-rose-50 px-3.5 py-2.5 text-sm text-rose-700">{error}</div>
         )}
 
         <button
           type="submit"
           disabled={busy}
-          className="w-full py-3 bg-[#0B4635] text-white text-xs font-bold rounded-xl disabled:opacity-60 active:scale-95 transition-all"
+          className="btn-primary w-full"
         >
           {busy ? 'Saxlanılır…' : mode === 'create' ? 'Mağaza aç' : 'Yadda saxla'}
         </button>

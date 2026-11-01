@@ -26,8 +26,8 @@ export function TimeBar({ createdAt, expiresAt }: { createdAt: string; expiresAt
   const pct = total > 0 ? Math.max(0, Math.min(1, left / total)) : 0;
   const color = pct > 0.5 ? '#1E9E5A' : pct > 0.2 ? '#FFC61A' : '#D93A2B';
   return (
-    <div className="absolute inset-x-0 top-0 h-1 bg-slate-100" aria-hidden="true">
-      <div className="h-full transition-[width] duration-1000" style={{ width: `${Math.round(pct * 100)}%`, background: color }} />
+    <div className="absolute inset-x-0 top-0 h-1.5 bg-[#EAF0EB]" aria-hidden="true">
+      <div className="h-full rounded-r-full transition-[width] duration-1000" style={{ width: `${Math.round(pct * 100)}%`, background: color }} />
     </div>
   );
 }
@@ -61,30 +61,29 @@ export function Stars({
 }
 
 /** Mağaza adı + etibar göstəriciləri: təsdiq, reytinq (və ya "Yeni"), dərəcə */
-export function StoreBadge({ store, tone = 'green' }: { store: PublicStore | null; tone?: 'green' | 'orange' }) {
-  if (!store) return <span className="text-xs font-bold text-slate-800">Partnyor mağaza</span>;
-  const accent = tone === 'green' ? 'text-[#0B4635]' : 'text-[#9A5B00]';
+export function StoreBadge({ store }: { store: PublicStore | null; tone?: 'green' | 'orange' }) {
+  if (!store) return <span className="text-sm font-bold text-slate-800">Partnyor mağaza</span>;
+  const rated = store.review_count > 0 || Number(store.rating) < 5;
   return (
     <div className="min-w-0">
-      <div className="flex items-center gap-1">
-        <span className="text-xs font-bold text-slate-800 truncate">{store.name}</span>
-        {store.verified && <ShieldCheck className={`w-3.5 h-3.5 flex-shrink-0 ${accent}`} />}
+      <div className="flex items-center gap-1.5">
+        <span className="text-sm font-bold text-slate-900 truncate">{store.name}</span>
+        {store.verified && <ShieldCheck className="w-4 h-4 flex-shrink-0 text-[#13694f]" aria-label="Təsdiqlənib" />}
       </div>
-      <div className="flex items-center gap-1.5 text-[10px] text-slate-500 mt-0.5 flex-wrap">
+      <div className="flex items-center gap-1.5 text-[11px] text-slate-500 mt-1 flex-wrap">
         {store.provider_type && store.provider_type !== 'shop' && (
-          <span className="px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700 font-semibold">
+          <span className="tag-blue">
             {providerTypeLabel(store.provider_type)}
-            {store.mobile_service ? ' · yerinə gəlir' : ''}
+            {store.mobile_service ? ', yerinə gəlir' : ''}
           </span>
         )}
-        {store.review_count > 0 || Number(store.rating) < 5 ? (
-          <>
-            <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-            <span className="font-semibold text-slate-700">{Number(store.rating).toFixed(1)}</span>
-            <span>({store.review_count})</span>
-          </>
+        {rated ? (
+          <span className="tag-amber">
+            {Number(store.rating).toFixed(1)} ulduz
+            {store.review_count > 0 ? ` (${store.review_count})` : ''}
+          </span>
         ) : (
-          <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 font-semibold">Yeni mağaza</span>
+          <span className="tag">Yeni mağaza</span>
         )}
         <span className={`font-bold ${GRADE_COLORS[store.grade] ?? 'text-slate-500'}`}>{store.grade}</span>
       </div>
@@ -95,14 +94,14 @@ export function StoreBadge({ store, tone = 'green' }: { store: PublicStore | nul
 export function PhotoStrip({ urls, alt = 'Şəkil' }: { urls: string[] | null | undefined; alt?: string }) {
   if (!urls || urls.length === 0) return null;
   return (
-    <div className="flex gap-1.5 mt-2">
+    <div className="flex flex-wrap gap-1.5 mt-2">
       {urls.map((u) => (
         <a key={u} href={u} target="_blank" rel="noreferrer" className="block">
           <img
             src={u}
             alt={alt}
             loading="lazy"
-            className="w-16 h-16 rounded-lg object-cover border border-slate-200 bg-slate-100"
+            className="w-16 h-16 rounded-xl object-cover bg-slate-100"
           />
         </a>
       ))}
@@ -110,11 +109,24 @@ export function PhotoStrip({ urls, alt = 'Şəkil' }: { urls: string[] | null | 
   );
 }
 
-export function EmptyState({ title, text }: { title: string; text?: string }) {
+export function EmptyState({
+  title,
+  text,
+  action,
+}: {
+  title: string;
+  text?: string;
+  action?: { label: string; onClick: () => void };
+}) {
   return (
-    <div className="rounded-3xl bg-white/70 border border-dashed border-slate-300 p-7 text-center">
-      <h3 className="font-display text-sm font-bold text-slate-800">{title}</h3>
-      {text && <p className="text-xs text-slate-500 mt-1 max-w-[16rem] mx-auto">{text}</p>}
+    <div className="rounded-3xl bg-white/60 border-2 border-dashed border-[#0B4635]/15 p-7 text-center">
+      <h3 className="font-display text-base font-extrabold text-slate-800">{title}</h3>
+      {text && <p className="text-[13px] text-slate-500 mt-1 max-w-[17rem] mx-auto">{text}</p>}
+      {action && (
+        <button type="button" onClick={action.onClick} className="btn-cta mt-4 px-6">
+          {action.label}
+        </button>
+      )}
     </div>
   );
 }
@@ -130,17 +142,51 @@ export function Chip({
   children: ReactNode;
   tone?: 'green' | 'orange';
 }) {
-  const on = tone === 'green' ? 'bg-[#0B4635] border-[#0B4635] text-white' : 'bg-[#FFC61A] border-[#FFC61A] text-[#1B1B12]';
+  const on =
+    tone === 'green'
+      ? 'bg-[#0B4635] text-white shadow-[0_6px_14px_-6px_rgba(11,70,53,0.7)]'
+      : 'bg-[#FFC61A] text-[#0F2A21] shadow-[0_6px_14px_-6px_rgba(255,198,26,0.9)]';
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`px-3 py-1.5 rounded-xl border text-xs font-semibold whitespace-nowrap transition-all ${
-        active ? on : 'bg-white border-slate-200 text-slate-600'
+      aria-pressed={active}
+      className={`px-3.5 py-2 rounded-full text-[13px] font-semibold transition active:scale-95 ${
+        active ? on : 'bg-white text-slate-600 shadow-[0_0_0_1px_rgba(15,42,33,0.09)]'
       }`}
     >
       {children}
     </button>
+  );
+}
+
+/** Aşağıdan açılan şüşə pəncərə: ödəniş təlimatı, təsdiqlər və s. üçün */
+export function Sheet({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, []);
+  return (
+    <div className="fixed inset-0 z-[60] flex items-end justify-center">
+      <div className="fixed inset-0 bg-[#0B2A20]/50 backdrop-blur-[2px]" onClick={onClose} />
+      <div
+        role="dialog"
+        aria-label={title}
+        className="glass sheet-up relative w-full max-w-md max-h-[88vh] overflow-y-auto rounded-t-[32px] p-5 pb-8 bg-white/90"
+        style={{ paddingBottom: 'max(32px, env(safe-area-inset-bottom))' }}
+      >
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-display text-lg font-extrabold text-slate-900">{title}</h3>
+          <button onClick={onClose} aria-label="Bağla" className="h-9 w-9 rounded-full bg-black/5 text-slate-600 flex items-center justify-center">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+        {children}
+      </div>
+    </div>
   );
 }
 
@@ -189,11 +235,11 @@ export function ImagePicker({
 
   return (
     <div>
-      {hint && <p className="text-[11px] text-slate-500 mb-1 font-medium">{hint}</p>}
+      {hint && <p className="label">{hint}</p>}
       <div className="flex items-center gap-2 flex-wrap">
         {urls.map((u) => (
           <div key={u} className="relative">
-            <img src={u} alt="" className="w-16 h-16 rounded-lg object-cover border border-slate-200" />
+            <img src={u} alt="" className="w-16 h-16 rounded-xl object-cover" />
             <button
               type="button"
               onClick={() => onChange(urls.filter((x) => x !== u))}
@@ -205,7 +251,7 @@ export function ImagePicker({
           </div>
         ))}
         {urls.length < max && (
-          <label className="w-16 h-16 rounded-lg border-2 border-dashed border-slate-300 flex flex-col items-center justify-center text-slate-400 cursor-pointer hover:border-[#0B4635] hover:text-[#0B4635]">
+          <label className="w-16 h-16 rounded-xl border-2 border-dashed border-[#0B4635]/25 bg-[#F4F7F4] flex flex-col items-center justify-center text-slate-500 cursor-pointer hover:border-[#0B4635] hover:text-[#0B4635]">
             <Camera className="w-5 h-5" />
             <span className="text-[9px] mt-0.5">{uploading ? 'Yüklənir…' : 'Əlavə et'}</span>
             <input
@@ -222,7 +268,7 @@ export function ImagePicker({
           </label>
         )}
       </div>
-      {err && <p className="text-[10px] text-rose-600 mt-1">{err}</p>}
+      {err && <p className="text-xs text-rose-600 mt-1">{err}</p>}
     </div>
   );
 }

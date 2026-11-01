@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Bell, ChevronRight, LogOut, Menu, Settings, ShieldAlert, Wrench, X } from 'lucide-react';
+import { Bell, Menu, X } from 'lucide-react';
 import type { Role } from '@/lib/theme';
 import { buyerDb, sellerDb } from '@/lib/supabase';
 import { useNotifications, useSeller } from '@/lib/auth';
 import { PLAN_LABELS, effectivePlan, formatCoin, formatTimeAgo, showToast } from '@/lib/utils';
+import { Sheet } from '@/components/ui';
 import type { CarBrand } from '@/lib/types';
 import { SellerAuthModal, StoreProfileModal } from '@/components/SellerAuth';
 import { DataModal } from '@/components/Report';
@@ -44,7 +45,7 @@ export function Navbar({ role, setRole, buyerUserId, brands }: Props) {
       setAuthOpen(true);
       return;
     }
-    if (!seller.store && !seller.isAdmin) {
+    if (!seller.store) {
       setProfileMode('create');
       return;
     }
@@ -63,50 +64,67 @@ export function Navbar({ role, setRole, buyerUserId, brands }: Props) {
   };
 
 
+  const goAccount = () => window.dispatchEvent(new CustomEvent('autotender:tab', { detail: 'account' }));
+  const pick = (r: Role) => {
+    setMenuOpen(false);
+    setRole(r);
+  };
+  const store = seller.store;
+  const modes: { key: Role; label: string; show: boolean; onClick: () => void }[] = [
+    { key: 'buyer', label: 'Alıcı', show: true, onClick: () => pick('buyer') },
+    {
+      key: 'seller',
+      label: 'Satıcı',
+      show: true,
+      onClick: goSeller,
+    },
+    { key: 'admin', label: 'Admin', show: seller.isAdmin, onClick: () => pick('admin') },
+  ];
+
   return (
     <>
-      <nav
-        className="sticky top-0 z-40 bg-[#0B4635] text-white border-b-4 border-[#FFC61A]"
-        style={{ paddingTop: 'max(env(safe-area-inset-top, 0px), 0px)' }}
+      <div
+        className="sticky top-0 z-40 px-3 pb-2"
+        style={{ paddingTop: 'max(env(safe-area-inset-top, 0px), 8px)' }}
       >
-        <div className="px-4 h-14 flex items-center justify-between gap-2 max-w-md mx-auto">
-          <div className="flex items-center gap-2.5 flex-shrink-0">
-            <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-[#FFC61A] text-[#1B1B12] -rotate-6">
-              <Wrench className="w-5 h-5" />
+        <nav className="glass rounded-[22px] pl-3 pr-2 h-14 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-9 h-9 rounded-[13px] flex items-center justify-center bg-[#0B4635] text-[#FFC61A] font-display font-extrabold text-lg -rotate-6 flex-shrink-0">
+              A
             </div>
-            <div className="leading-none">
-              <span className="font-display font-extrabold text-lg tracking-tight">
-                Auto<span className="text-[#FFC61A]">Tender</span>
-              </span>
-              <div className="text-[11px] font-medium text-white/70 truncate max-w-[140px] mt-1">
-                {sellerActive
-                  ? seller.store?.name || 'Satıcı'
-                  : role === 'admin'
-                    ? 'Admin'
-                    : 'Detal və usta — qiymət yarışı'}
-              </div>
+            <div className="leading-none min-w-0">
+              <div className="font-display font-extrabold text-[19px] tracking-tight text-[#0B4635]">AutoTender</div>
+              {(sellerActive || role === 'admin') && (
+                <div className="text-[11px] font-medium text-slate-500 truncate max-w-[130px] mt-1">
+                  {sellerActive ? seller.store?.name || 'Satıcı' : 'Admin paneli'}
+                </div>
+              )}
             </div>
           </div>
 
           <div className="flex items-center gap-1.5 flex-shrink-0">
             {sellerActive && seller.store && (
-              <div className="flex items-center px-2.5 h-9 rounded-xl bg-white/10 border border-white/20 text-xs font-bold text-[#FFC61A]">
-                <span className="font-display">
-                  {effectivePlan(seller.store) === 'pro' ? '∞ ' : ''}
-                  {formatCoin(seller.store.coin_balance)} coin
-                </span>
-              </div>
+              <button
+                type="button"
+                onClick={goAccount}
+                aria-label="Hesab və coin"
+                className="h-10 px-3 rounded-2xl bg-[#FFC61A] text-[#0F2A21] font-display font-extrabold text-sm active:scale-95 transition shadow-[0_6px_14px_-6px_rgba(255,198,26,0.95)]"
+              >
+                {effectivePlan(seller.store) === 'pro' ? '∞ ' : ''}
+                {formatCoin(seller.store.coin_balance)}
+                <span className="text-[11px] font-bold ml-1 opacity-70">coin</span>
+              </button>
             )}
 
             <button
               type="button"
               onClick={openNotifs}
               aria-label="Bildirişlər"
-              className="relative h-9 w-9 rounded-xl flex items-center justify-center bg-white/10 border border-white/20 text-white hover:bg-white/20 active:scale-95"
+              className="relative h-10 w-10 rounded-2xl flex items-center justify-center bg-black/5 text-slate-700 active:scale-95 transition"
             >
-              <Bell className="w-4 h-4" />
+              <Bell className="w-[18px] h-[18px]" />
               {unread > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center shadow-md shadow-red-500/40">
+                <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center">
                   {unread > 9 ? '9+' : unread}
                 </span>
               )}
@@ -116,164 +134,119 @@ export function Navbar({ role, setRole, buyerUserId, brands }: Props) {
               type="button"
               onClick={() => setMenuOpen(true)}
               aria-label="Menyu"
-              className="h-9 w-9 rounded-xl flex items-center justify-center bg-white/10 border border-white/20 text-white hover:bg-white/20 active:scale-95"
+              className="h-10 w-10 rounded-2xl flex items-center justify-center bg-[#0B4635] text-white active:scale-95 transition"
             >
               <Menu className="w-5 h-5" />
             </button>
           </div>
-        </div>
+        </nav>
 
         {showNotifs && (
           <>
             <div className="fixed inset-0 z-40" onClick={() => setShowNotifs(false)} />
-            <div className="absolute right-4 top-14 z-50 bg-white rounded-2xl shadow-2xl border border-slate-200 w-72 max-h-80 overflow-y-auto">
-              <div className="p-3 border-b border-slate-100 flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-700">Bildirişlər</span>
-                <span className="text-[10px] text-slate-400">Canlı</span>
+            <div className="glass sheet-up absolute left-3 right-3 top-[calc(100%-2px)] z-50 rounded-3xl max-h-[60vh] overflow-y-auto bg-white/90">
+              <div className="p-3.5 border-b border-black/5">
+                <span className="font-display text-sm font-extrabold text-slate-800">Bildirişlər</span>
               </div>
               {items.length === 0 ? (
-                <div className="p-5 text-center text-xs text-slate-400">Bildiriş yoxdur</div>
+                <div className="p-6 text-center text-sm text-slate-400">Bildiriş yoxdur</div>
               ) : (
                 items.map((n) => (
-                  <div key={n.id} className="p-3 border-b border-slate-100 last:border-0">
-                    <div className="text-xs font-bold text-slate-800">{n.title}</div>
-                    {n.body && <div className="text-[11px] text-slate-500 mt-0.5">{n.body}</div>}
-                    <div className="text-[10px] text-slate-400 mt-1">{formatTimeAgo(n.created_at)}</div>
+                  <div key={n.id} className="p-3.5 border-b border-black/5 last:border-0">
+                    <div className="text-sm font-bold text-slate-800">{n.title}</div>
+                    {n.body && <div className="text-xs text-slate-500 mt-0.5">{n.body}</div>}
+                    <div className="text-[11px] text-slate-400 mt-1">{formatTimeAgo(n.created_at)}</div>
                   </div>
                 ))
               )}
             </div>
           </>
         )}
-      </nav>
+      </div>
 
       {menuOpen && (
-        <div className="fixed inset-0 z-50 flex justify-end">
-          <div className="fixed inset-0 bg-black/60" onClick={() => setMenuOpen(false)} />
-          <div className="relative w-[85%] max-w-xs bg-white h-full p-5 flex flex-col z-10 shadow-2xl overflow-y-auto">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h3 className="text-sm font-bold text-slate-900">Menyu</h3>
-              <button onClick={() => setMenuOpen(false)} className="p-1 rounded-lg bg-slate-100 text-slate-500" aria-label="Bağla">
-                <X className="w-4 h-4" />
-              </button>
+        <Sheet title="Menyu" onClose={() => setMenuOpen(false)}>
+          <div className="space-y-4">
+            <div>
+              <span className="label">Rejim</span>
+              <div className="flex gap-1.5 rounded-2xl bg-black/5 p-1">
+                {modes
+                  .filter((m) => m.show)
+                  .map((m) => (
+                    <button
+                      key={m.key}
+                      type="button"
+                      onClick={m.onClick}
+                      aria-pressed={role === m.key}
+                      className={`flex-1 py-2.5 rounded-xl text-sm font-display font-bold transition ${
+                        role === m.key ? 'bg-white text-[#0B4635] shadow-sm' : 'text-slate-500'
+                      }`}
+                    >
+                      {m.key === 'seller' && !seller.userId ? 'Satıcı girişi' : m.label}
+                    </button>
+                  ))}
+              </div>
             </div>
 
-            <div className="mt-4 space-y-3">
-              {buyerActive && (
-                <>
-                  <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
-                    <span className="text-xs font-bold text-slate-800 block mb-1">Siz sürücüsünüz?</span>
-                    <p className="text-[11px] text-slate-500">
-                      Qeydiyyat tələb olunmur. Sorğunu göndərin, mağazalar qiymət versin, ən yaxşısını seçin.
-                    </p>
+            {seller.userId && (
+              <div className="card-flat">
+                <div className="text-sm font-bold text-slate-900 truncate">{store ? store.name : seller.email}</div>
+                {store && (
+                  <div className="text-xs text-slate-500 mt-1">
+                    {Number(store.rating).toFixed(1)} ulduz
+                    {store.review_count > 0 ? ` (${store.review_count} rəy)` : ''} · {store.grade} · {PLAN_LABELS[effectivePlan(store)]}
                   </div>
-
-                  <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
-                    <span className="text-xs font-bold text-slate-800 block mb-1">Ehtiyat hissəsi satıcısısınız?</span>
-                    <p className="text-[11px] text-slate-500 mb-3">
-                      Mağazanızı açın və sürücülərin təcili sorğularına qiymət verin.
-                    </p>
-                    <button
-                      type="button"
-                      onClick={goSeller}
-                      className="w-full py-2.5 px-3 bg-[#FFC61A] hover:bg-[#FFD24D] text-[#1B1B12] text-xs font-bold rounded-xl flex items-center justify-center gap-1 active:scale-95"
-                    >
-                      {seller.userId ? 'Satıcı panelinə keç' : 'Satıcı girişi'}
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMenuOpen(false);
-                      setDataModal('buyer');
-                    }}
-                    className="w-full py-2.5 px-3 border border-slate-200 text-slate-600 text-xs font-semibold rounded-xl"
-                  >
-                    Mənim məlumatlarım
-                  </button>
-                </>
-              )}
-
-              {!buyerActive && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setRole('buyer');
-                    setMenuOpen(false);
-                  }}
-                  className="w-full py-2.5 px-3 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-xl"
-                >
-                  Alıcı rejiminə keç
-                </button>
-              )}
-
-              {seller.isAdmin && role !== 'admin' && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setRole('admin');
-                    setMenuOpen(false);
-                  }}
-                  className="w-full py-2.5 px-3 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5"
-                >
-                  <ShieldAlert className="w-4 h-4" /> Admin paneli
-                </button>
-              )}
-
-              {seller.userId && (
-                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Hesab</span>
-                  <div className="text-xs font-semibold text-slate-800 truncate">{seller.email}</div>
-                  {seller.store && (
-                    <div className="text-[11px] text-slate-500 mt-0.5">
-                      {seller.store.name} · {formatCoin(seller.store.coin_balance)} coin · {PLAN_LABELS[effectivePlan(seller.store)]}
-                    </div>
-                  )}
-                  <div className="flex gap-2 mt-3">
-                    {seller.store && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setMenuOpen(false);
-                          setProfileMode('edit');
-                        }}
-                        className="flex-1 py-2 bg-white border border-slate-200 text-slate-700 text-[11px] font-bold rounded-lg flex items-center justify-center gap-1"
-                      >
-                        <Settings className="w-3.5 h-3.5" /> Profil
-                      </button>
-                    )}
+                )}
+                <div className="text-[11px] text-slate-400 mt-0.5 truncate">{seller.email}</div>
+                <div className="grid grid-cols-3 gap-1.5 mt-3">
+                  {store && (
                     <button
                       type="button"
                       onClick={() => {
                         setMenuOpen(false);
-                        setDataModal('seller');
+                        setProfileMode('edit');
                       }}
-                      className="flex-1 py-2 bg-white border border-slate-200 text-slate-600 text-[11px] font-bold rounded-lg"
+                      className="btn-ghost !px-2"
                     >
-                      Məlumatlarım
+                      Profil
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => void logout()}
-                      className="flex-1 py-2 bg-white border border-slate-200 text-slate-600 text-[11px] font-bold rounded-lg flex items-center justify-center gap-1"
-                    >
-                      <LogOut className="w-3.5 h-3.5" /> Çıxış
-                    </button>
-                  </div>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      setDataModal('seller');
+                    }}
+                    className="btn-ghost !px-2"
+                  >
+                    Məlumatlar
+                  </button>
+                  <button type="button" onClick={() => void logout()} className="btn-ghost !px-2">
+                    Çıxış
+                  </button>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
+
+            <button
+              type="button"
+              onClick={() => {
+                setMenuOpen(false);
+                setDataModal('buyer');
+              }}
+              className="btn-ghost w-full"
+            >
+              Alıcı məlumatlarım
+            </button>
 
             {(termsUrl || privacyUrl) && (
-              <div className="mt-6 pt-4 border-t border-slate-100 flex gap-4 text-[11px] text-slate-400">
+              <div className="pt-3 border-t border-black/5 flex gap-4 text-xs text-slate-400">
                 {termsUrl && <a href={termsUrl} target="_blank" rel="noreferrer" className="underline">İstifadə şərtləri</a>}
                 {privacyUrl && <a href={privacyUrl} target="_blank" rel="noreferrer" className="underline">Məxfilik siyasəti</a>}
               </div>
             )}
           </div>
-        </div>
+        </Sheet>
       )}
 
       {dataModal && (

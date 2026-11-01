@@ -80,6 +80,7 @@ export type BuyerRequest = {
   budget_azn: number | null;
   status: RequestStatus;
   deal_status: string | null;
+  sealed?: boolean;
   accepted_bid_id: string | null;
   expires_at: string;
   created_at: string;
@@ -322,6 +323,7 @@ export type BillingOverview = {
   coin_balance: number;
   bid_fee: number;
   base_bid_fee: number;
+  sale_bonus?: number;
   catalog: CatalogItem[];
   orders: PaymentOrder[];
 };

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { BarChart3, Clock, Inbox, ListChecks, Archive, Coins, Crown, Wallet } from 'lucide-react';
+import { Archive, BarChart3, Inbox, ListChecks, Wallet } from 'lucide-react';
 import {
   CATEGORIES,
   CONDITION_LABELS,
@@ -31,8 +31,7 @@ import { ReportModal } from '@/components/Report';
 
 type Tab = 'feed' | 'bids' | 'closed' | 'stats' | 'account';
 
-const inputCls =
-  'w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-2 text-xs text-slate-800 focus:outline-none focus:border-[#0B4635]';
+const inputCls = 'input';
 
 export function SellerPanel() {
   const { store, refresh, userId } = useSeller();
@@ -49,6 +48,16 @@ export function SellerPanel() {
   const [report, setReport] = useState<SellerFeedItem | null>(null);
 
   useTick(30000);
+
+  // Navbar-dakı coin düyməsi "Hesab" bölməsini açır
+  useEffect(() => {
+    const onTab = (e: Event) => {
+      const t = (e as CustomEvent<string>).detail;
+      if (t === 'account' || t === 'feed' || t === 'bids') setTab(t);
+    };
+    window.addEventListener('autotender:tab', onTab);
+    return () => window.removeEventListener('autotender:tab', onTab);
+  }, []);
 
   const storeId = store?.id ?? null;
 
@@ -137,84 +146,67 @@ export function SellerPanel() {
   if (!store) return null;
 
   return (
-    <div className="text-slate-800 pb-36 pt-2.5 px-3 max-w-md mx-auto">
-      {/* Balans */}
-      <button
-        type="button"
-        onClick={() => setTab('account')}
-        className="relative overflow-hidden w-full text-left rounded-2xl bg-[#0B4635] text-white p-3.5 pb-4 mb-3 flex items-center justify-between"
-      >
-        <div>
-          <div className="text-[10px] uppercase tracking-wider text-white/60 font-semibold flex items-center gap-1">
-            Coin balansı
-            {plan !== 'free' && (
-              <span className="inline-flex items-center gap-0.5 text-amber-300 normal-case tracking-normal">
-                <Crown className="w-3 h-3" /> {PLAN_LABELS[plan]}
+    <div className="text-slate-800 pb-36 pt-1 px-3 max-w-md mx-auto">
+      {/* Mağaza: ad, reytinq, dərəcə — coin yalnız yuxarıdakı düymədə göstərilir */}
+      <div className="flex items-center justify-between gap-2 px-1 mb-3">
+        <div className="min-w-0">
+          <h2 className="font-display text-2xl font-extrabold text-[#0B4635] truncate">{store.name}</h2>
+          <div className="flex items-center gap-1.5 flex-wrap mt-1.5">
+            {store.review_count > 0 || Number(store.rating) < 5 ? (
+              <span className="tag-amber">
+                {Number(store.rating).toFixed(1)} ulduz{store.review_count > 0 ? ` (${store.review_count} rəy)` : ''}
               </span>
+            ) : (
+              <span className="tag">Yeni mağaza</span>
             )}
-          </div>
-          <div className="font-display text-3xl font-extrabold flex items-center gap-2 mt-1 leading-none">
-            <Coins className="w-6 h-6 text-[#FFC61A]" /> {formatCoin(balance)}
+            <span className="tag-green">Dərəcə {store.grade}</span>
+            {store.verified && <span className="tag-green">Təsdiqlənib</span>}
+            {plan !== 'free' && <span className="tag-blue">{PLAN_LABELS[plan]}</span>}
           </div>
         </div>
-        <div className="text-right text-[10px] text-white/70 leading-snug">
-          Təklif: {fee === 0 ? 'pulsuz' : `−${formatCoin(fee)} coin`}
-          <br />
-          Satış: +5 coin bonus
-          <br />
-          {balance < 1 && fee > 0 ? <span className="text-[#FFC61A] font-bold">Coin al</span> : 'Seçilməsə, coin qayıdır'}
-        </div>
-        <div className="road-dash absolute inset-x-0 bottom-0" />
-      </button>
+      </div>
 
-      {loadError && (
-        <div className="mb-2 rounded-xl bg-amber-50 border border-amber-200 p-2.5 text-[11px] text-amber-800">
-          {loadError}
-        </div>
-      )}
+      {loadError && <div className="mb-3 rounded-2xl bg-amber-50 p-3 text-sm text-amber-800">{loadError}</div>}
 
       {/* ===== LENT ===== */}
       {tab === 'feed' && (
-        <div>
+        <div className="rise">
           {(hasBothTypes || typeFilter !== 'all') && (
-            <div className="flex gap-1.5 mb-2">
+            <div className="chips mb-2">
               <Chip tone="orange" active={typeFilter === 'all'} onClick={() => setType('all')}>
                 Hamısı ({liveFeed.length})
               </Chip>
               <Chip tone="orange" active={typeFilter === 'part'} onClick={() => setType('part')}>
-                🔩 Detal
+                Detal
               </Chip>
               <Chip tone="orange" active={typeFilter === 'service'} onClick={() => setType('service')}>
-                🔧 Xidmət
+                Xidmət
               </Chip>
             </div>
           )}
           {chipCats.length > 0 && (
-            <div className="flex gap-1.5 overflow-x-auto pb-1 mb-2.5">
+            <div className="chips mb-3">
               <Chip tone="orange" active={cat === 'all'} onClick={() => setCat('all')}>
-                Hamısı
+                Bütün növlər
               </Chip>
               {chipCats.map((c) => (
                 <Chip tone="orange" key={c.key} active={cat === c.key} onClick={() => setCat(c.key)}>
-                  {c.icon} {c.short}
+                  {c.short}
                 </Chip>
               ))}
             </div>
           )}
 
           {loading ? (
-            <div className="space-y-2.5">
+            <div className="space-y-3">
               {[1, 2].map((i) => (
-                <div key={i} className="rounded-2xl bg-white border border-slate-100 h-28 animate-pulse" />
+                <div key={i} className="skeleton h-32" />
               ))}
             </div>
           ) : visibleFeed.length === 0 ? (
-            <EmptyState
-              title="Hazırda uyğun sorğu yoxdur"
-              text="Yeni sorğu gələndə bildiriş alacaqsınız. Mağaza profilinizdə marka və kateqoriyaları yoxlayın."
-            />
+            <EmptyState title="Hazırda uyğun sorğu yoxdur" text="Yeni sorğu gələndə bildiriş alacaqsınız." />
           ) : (
-            <div className="space-y-2.5">
+            <div className="space-y-3">
               {visibleFeed.map((r) => (
                 <FeedCard
                   key={r.id}
@@ -225,6 +217,7 @@ export function SellerPanel() {
                   userId={userId}
                   onReport={() => setReport(r)}
                   onToggle={() => setOpenId(openId === r.id ? null : r.id)}
+                  onNeedCoin={() => setTab('account')}
                   onDone={async () => {
                     setOpenId(null);
                     await Promise.all([loadAll(), refresh()]);
@@ -238,15 +231,13 @@ export function SellerPanel() {
 
       {/* ===== MƏNİM TƏKLİFLƏRİM ===== */}
       {tab === 'bids' && (
-        <div>
+        <div className="rise">
           {myBids.length === 0 ? (
             <EmptyState title="Hələ təklifiniz yoxdur" text="Lentdən sorğu seçib qiymət verin." />
           ) : (
-            <div className="space-y-2.5">
+            <div className="space-y-3">
               {pendingBids.length > 0 && (
-                <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider px-1">
-                  Cavab gözləyən: {pendingBids.length}
-                </div>
+                <div className="text-sm font-semibold text-slate-500 px-1">Cavab gözləyən: {pendingBids.length}</div>
               )}
               {myBids.map((b) => (
                 <MyBidCard key={b.bid_id} bid={b} />
@@ -258,44 +249,41 @@ export function SellerPanel() {
 
       {/* ===== ARXİV ===== */}
       {tab === 'closed' && (
-        <div>
-          <p className="text-[11px] text-slate-500 px-1 mb-2">
-            Bağlanmış sorğular və satış qiymətləri — bazarı izləmək üçün. Alıcı məlumatları göstərilmir.
-          </p>
+        <div className="rise">
           {closed.length === 0 ? (
             <EmptyState title="Arxiv boşdur" />
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               {closed.map((c) => (
-                <div key={c.id} className="rounded-2xl bg-white border border-slate-100 p-3 shadow-xs">
-                  <div className="flex justify-between items-start gap-2">
+                <div key={c.id} className="card !p-3.5">
+                  <div className="flex justify-between items-start gap-3">
                     <div className="min-w-0">
-                      <p className="text-xs font-bold text-slate-800">
+                      <p className="text-[13px] font-bold text-slate-500">
                         {c.brand} {c.model} {c.year ?? ''}
                       </p>
-                      <p className="text-[11px] text-slate-600 mt-0.5">{c.part_name}</p>
-                      <p className="text-[10px] text-slate-400 mt-0.5">
+                      <p className="text-sm font-bold text-slate-900 mt-0.5">{c.part_name}</p>
+                      <p className="text-xs text-slate-400 mt-1">
                         {requestCategoryLabel(c)}
-                        {c.request_type === 'service' && c.city ? ` · ${c.city}` : ''} · {formatTimeAgo(c.created_at)}
+                        {c.request_type === 'service' && c.city ? `, ${c.city}` : ''}, {formatTimeAgo(c.created_at)}
                       </p>
                     </div>
                     <div className="text-right flex-shrink-0">
                       {c.accepted_price != null ? (
                         <>
-                          <div className="text-xs font-bold text-[#0B4635]">{formatPrice(c.accepted_price)}</div>
-                          <div className="text-[9px] text-slate-400">satış qiyməti</div>
+                          <div className="font-display text-lg font-extrabold text-[#0B4635] leading-none">
+                            {formatPrice(c.accepted_price)}
+                          </div>
+                          <div className="text-[11px] text-slate-400 mt-1">satış qiyməti</div>
                         </>
                       ) : (
-                        <div className="text-[10px] text-slate-400">
+                        <div className="text-xs text-slate-400">
                           {c.status === 'completed' ? 'Satılıb' : c.status === 'cancelled' ? 'Ləğv' : 'Satılmayıb'}
                         </div>
                       )}
-                      <div className="text-[10px] text-slate-400 mt-0.5">{c.bid_count} təklif</div>
+                      <div className="text-xs text-slate-400 mt-1">{c.bid_count} təklif</div>
                     </div>
                   </div>
-                  {c.i_bid && (
-                    <div className="mt-1.5 text-[10px] font-semibold text-[#9A5B00]">Siz təklif vermisiniz</div>
-                  )}
+                  {c.i_bid && <span className="tag-amber mt-2">Siz təklif vermisiniz</span>}
                 </div>
               ))}
             </div>
@@ -304,10 +292,18 @@ export function SellerPanel() {
       )}
 
       {/* ===== STATİSTİKA ===== */}
-      {tab === 'stats' && <Stats bids={myBids} onUpgrade={() => setTab('account')} />}
+      {tab === 'stats' && (
+        <div className="rise">
+          <Stats bids={myBids} onUpgrade={() => setTab('account')} />
+        </div>
+      )}
 
       {/* ===== HESAB ===== */}
-      {tab === 'account' && <AccountTab texts={texts} onChanged={refresh} />}
+      {tab === 'account' && (
+        <div className="rise">
+          <AccountTab texts={texts} onChanged={refresh} />
+        </div>
+      )}
 
       {report && (
         <ReportModal
@@ -320,7 +316,7 @@ export function SellerPanel() {
       )}
 
       {/* ===== ALT MENYU ===== */}
-      <div className="fixed bottom-14 left-1/2 -translate-x-1/2 w-[92%] max-w-sm rounded-full bg-[#0B4635]/95 backdrop-blur-md shadow-2xl shadow-black/30 border border-white/10 py-2.5 px-3 flex justify-around items-center z-30">
+      <div className="dock glass">
         {(
           [
             { k: 'feed', label: 'Lent', icon: Inbox, badge: liveFeed.filter((r) => !r.my_bid_id).length },
@@ -330,22 +326,16 @@ export function SellerPanel() {
             { k: 'account', label: 'Hesab', icon: Wallet, badge: 0 },
           ] as const
         ).map(({ k, label, icon: Icon, badge }) => (
-          <button
-            key={k}
-            onClick={() => setTab(k)}
-            className={`flex flex-col items-center gap-1 transition-all ${
-              tab === k ? 'text-[#FFC61A] font-bold scale-105' : 'text-white/60 hover:text-white'
-            }`}
-          >
+          <button key={k} onClick={() => setTab(k)} aria-current={tab === k} className="dock-item">
             <div className="relative">
               <Icon className="w-5 h-5" />
               {badge > 0 && (
-                <span className="absolute -top-1 -right-2.5 bg-[#FFC61A] text-[#1B1B12] text-[9px] font-black min-w-[14px] h-3.5 px-0.5 rounded-full flex items-center justify-center">
+                <span className="absolute -top-1.5 -right-3 bg-[#FFC61A] text-[#0F2A21] text-[10px] font-black min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center">
                   {badge}
                 </span>
               )}
             </div>
-            <span className="text-[10px]">{label}</span>
+            {label}
           </button>
         ))}
       </div>
@@ -365,6 +355,7 @@ function FeedCard({
   userId,
   onReport,
   onToggle,
+  onNeedCoin,
   onDone,
 }: {
   item: SellerFeedItem;
@@ -374,6 +365,7 @@ function FeedCard({
   userId: string | null;
   onReport: () => void;
   onToggle: () => void;
+  onNeedCoin: () => void;
   onDone: () => Promise<void>;
 }) {
   const [price, setPrice] = useState('');
@@ -393,12 +385,13 @@ function FeedCard({
   const overBudget = item.budget_azn != null && Number.isFinite(priceNum) && priceNum > Number(item.budget_azn);
   const urg = URGENCY_CONFIG[item.urgency];
   const noteIssue = noteProblem(note);
+  const lowCoin = balance < fee;
 
   const submit = async () => {
     setError(null);
     if (!Number.isFinite(priceNum) || priceNum <= 0) return setError('Qiyməti düzgün yazın.');
     if (noteIssue) return setError(noteIssue);
-    if (balance < fee) return setError('Coin balansınız çatmır. "Hesab" bölməsindən coin ala bilərsiniz.');
+    if (lowCoin) return setError('Coin çatmır. Hesab bölməsindən coin ala bilərsiniz.');
     setBusy(true);
     try {
       if (isService) {
@@ -423,7 +416,7 @@ function FeedCard({
       }
       showToast({
         title: 'Təklif göndərildi',
-        body: fee === 0 ? 'Pro planı: təklif pulsuzdur.' : `−${formatCoin(fee)} coin. Seçilməsə, vaxt bitəndə geri qayıdacaq.`,
+        body: fee === 0 ? 'Pro: pulsuz.' : `−${formatCoin(fee)} coin. Seçilməsə, geri qayıdır.`,
         type: 'success',
       });
       setPrice('');
@@ -438,89 +431,81 @@ function FeedCard({
   };
 
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-white border border-slate-200/70 p-3.5 pt-4 shadow-[0_8px_22px_-16px_rgba(11,70,53,0.45)]">
+    <div className="card pt-5">
       <TimeBar createdAt={item.created_at} expiresAt={item.expires_at} />
-      <div className="flex items-start justify-between gap-2">
+      <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-xs font-bold text-slate-800">
+            <span className="text-[13px] font-bold text-slate-500">
               {item.brand} {item.model} {item.year ?? ''}
             </span>
-            <span className="text-[9px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-medium">
-              {requestCategoryLabel(item)}
-            </span>
+            <span className="tag">{requestCategoryLabel(item)}</span>
             {isService && (
-              <span className="text-[9px] bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded font-semibold">
-                🔧 {item.city}
+              <span className="tag-blue">
+                {item.city}
                 {item.area ? `, ${item.area}` : ''}
-                {item.on_site ? ' · yerində' : ''}
-                {item.provider_pref === 'master' ? ' · usta' : item.provider_pref === 'service_center' ? ' · servis' : ''}
+                {item.on_site ? ', yerində' : ''}
+                {item.provider_pref === 'master' ? ', usta' : item.provider_pref === 'service_center' ? ', servis' : ''}
               </span>
             )}
-            {urg && <span className="text-[10px]">{urg.icon}</span>}
+            {urg && item.urgency === 'express' && <span className="tag-rose">Təcili</span>}
           </div>
-          <p className="font-display text-base font-bold text-[#0B4635] mt-0.5 leading-snug">{item.part_name}</p>
-          {!isService && item.vin && <p className="text-[10px] font-mono text-slate-500 mt-0.5">VIN: {item.vin}</p>}
+          <p className="font-display text-xl font-extrabold text-[#0B4635] mt-1 leading-tight">{item.part_name}</p>
+          {!isService && item.vin && <p className="text-xs font-mono text-slate-500 mt-1">VIN: {item.vin}</p>}
         </div>
-        <span className="text-[11px] font-mono font-bold text-[#9A5B00] bg-amber-50 border border-amber-100 px-2 py-0.5 rounded-md whitespace-nowrap flex items-center gap-1">
-          <Clock className="w-3 h-3" />
-          <Countdown expiresAt={item.expires_at} />
-        </span>
+        <div className="text-right flex-shrink-0">
+          <div className="font-display text-lg font-extrabold text-[#9A5B00] leading-none">
+            <Countdown expiresAt={item.expires_at} />
+          </div>
+          <div className="text-[11px] text-slate-400 mt-1">qalıb</div>
+        </div>
       </div>
 
       <PhotoStrip urls={item.part_images} />
 
-      <div className="flex items-center justify-between text-[11px] text-slate-500 mt-2 pt-2 border-t border-slate-100">
-        <span>Büdcə: {item.budget_azn ? formatPrice(item.budget_azn) : 'Razılaşma'}</span>
+      <div className="flex items-center justify-between text-[13px] text-slate-500 mt-3">
+        <span>Büdcə: {item.budget_azn ? formatPrice(item.budget_azn) : 'razılaşma ilə'}</span>
         <span>
-          {item.bid_count}/5 təklif{item.slots_full ? ' · dolub' : ''}
+          {item.bid_count}/5 təklif{item.slots_full ? ', dolub' : ''}
         </span>
       </div>
-      <button type="button" onClick={onReport} className="mt-1 text-[10px] text-slate-400 hover:text-rose-500">
-        Şikayət et
-      </button>
 
       {alreadyBid ? (
-        <div className="mt-2 text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-lg px-2.5 py-1.5 text-center">
-          Təklifiniz göndərilib ✓
+        <div className="mt-3 rounded-2xl bg-emerald-50 px-3 py-2.5 text-sm font-semibold text-emerald-800 text-center">
+          Təklifiniz göndərilib
         </div>
       ) : item.slots_full ? (
-        <div className="mt-2 text-[11px] font-semibold text-slate-500 bg-slate-50 border border-slate-100 rounded-lg px-2.5 py-1.5 text-center">
+        <div className="mt-3 rounded-2xl bg-[#F4F7F4] px-3 py-2.5 text-sm font-semibold text-slate-500 text-center">
           Təklif limiti dolub
         </div>
       ) : (
-        <button
-          onClick={onToggle}
-          className="w-full mt-2.5 py-2.5 bg-[#FFC61A] hover:bg-[#FFD24D] text-[#1B1B12] text-xs font-display font-extrabold rounded-lg transition-all active:scale-[0.98] shadow-[0_2px_0_#C99700]"
-        >
+        <button onClick={onToggle} className={`${open ? 'btn-ghost' : 'btn-cta'} w-full mt-3`}>
           {open ? 'Bağla' : 'Qiymət ver'}
         </button>
       )}
 
       {open && !alreadyBid && !item.slots_full && (
-        <div className="mt-2.5 pt-2.5 border-t border-slate-100 space-y-2">
+        <div className="mt-3.5 pt-3.5 border-t border-black/5 space-y-3.5">
           <div>
-            <label className="text-[11px] text-slate-500 mb-0.5 block font-medium">Qiymət (AZN) *</label>
+            <label className="label">Qiymət (AZN) *</label>
             <input
               type="number"
               inputMode="decimal"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
               placeholder="0"
-              className={inputCls}
+              className={`${inputCls} font-display text-xl font-bold`}
             />
             {overBudget && (
-              <p className="text-[10px] text-amber-700 mt-1">
-                Qiymət alıcının büdcəsindən ({formatPrice(item.budget_azn)}) yüksəkdir — seçilmə ehtimalı azalır.
-              </p>
+              <p className="text-xs text-amber-700 mt-1.5">Alıcının büdcəsindən ({formatPrice(item.budget_azn)}) yüksəkdir.</p>
             )}
           </div>
 
           {isService ? (
             <>
               <div>
-                <label className="text-[11px] text-slate-500 mb-1 block font-medium">Qiymət növü</label>
-                <div className="flex gap-1.5">
+                <label className="label">Qiymət növü</label>
+                <div className="chips">
                   <Chip tone="orange" active={priceType === 'fixed'} onClick={() => setPriceType('fixed')}>
                     Dəqiq qiymət
                   </Chip>
@@ -530,8 +515,8 @@ function FeedCard({
                 </div>
               </div>
               <div>
-                <label className="text-[11px] text-slate-500 mb-1 block font-medium">İş nə qədər çəkəcək?</label>
-                <div className="flex gap-1.5 flex-wrap">
+                <label className="label">İş nə qədər çəkəcək?</label>
+                <div className="chips">
                   {ETA_OPTIONS.map((o) => (
                     <Chip tone="orange" key={o.hours} active={eta === o.hours} onClick={() => setEta(o.hours)}>
                       {o.label}
@@ -542,8 +527,8 @@ function FeedCard({
             </>
           ) : (
             <div>
-              <label className="text-[11px] text-slate-500 mb-1 block font-medium">Vəziyyət</label>
-              <div className="flex gap-1.5 flex-wrap">
+              <label className="label">Vəziyyət</label>
+              <div className="chips">
                 {(['original', 'analog', 'used'] as Condition[]).map((c) => (
                   <Chip tone="orange" key={c} active={condition === c} onClick={() => setCondition(c)}>
                     {CONDITION_LABELS[c]}
@@ -554,8 +539,8 @@ function FeedCard({
           )}
 
           <div>
-            <label className="text-[11px] text-slate-500 mb-1 block font-medium">Zəmanət</label>
-            <div className="flex gap-1.5 flex-wrap">
+            <label className="label">Zəmanət</label>
+            <div className="chips">
               {WARRANTY_OPTIONS.map((w) => (
                 <Chip tone="orange" key={w} active={warranty === w} onClick={() => setWarranty(w)}>
                   {w}
@@ -565,20 +550,16 @@ function FeedCard({
           </div>
 
           <div>
-            <label className="text-[11px] text-slate-500 mb-0.5 block font-medium">
-              {isService ? 'Qeyd (könüllü: nə daxildir, hansı hissə ilə)' : 'Qeyd (könüllü: OEM nömrə, mənşə, çatdırılma)'}
-            </label>
+            <label className="label">Qeyd (könüllü)</label>
             <input
               type="text"
               value={note}
               maxLength={140}
               onChange={(e) => setNote(e.target.value)}
-              placeholder={
-                isService ? 'Məs: diaqnostika pulsuz, hissə ayrıca' : 'Məs: OEM 31316-8X, Almaniya istehsalı, anbarda var'
-              }
+              placeholder={isService ? 'Məs: diaqnostika pulsuz' : 'Məs: OEM 31316-8X, anbarda var'}
               className={inputCls}
             />
-            {noteIssue && <p className="text-[10px] text-rose-600 mt-1">{noteIssue}</p>}
+            {noteIssue && <p className="text-xs text-rose-600 mt-1">{noteIssue}</p>}
           </div>
 
           <ImagePicker
@@ -587,25 +568,23 @@ function FeedCard({
             urls={images}
             onChange={setImages}
             onBusy={setUploading}
-            hint={isService ? 'Şəkil (könüllü): əvvəlki işləriniz, iş yeri' : 'Şəkil (könüllü): sizdəki həmin detalın şəkli'}
+            hint={isService ? 'Şəkil (könüllü): əvvəlki işləriniz' : 'Şəkil (könüllü): sizdəki detal'}
           />
 
-          {error && (
-            <div className="rounded-lg bg-rose-50 border border-rose-200 px-3 py-2 text-[11px] text-rose-700">
-              {error}
-            </div>
-          )}
+          {error && <div className="rounded-2xl bg-rose-50 px-3.5 py-2.5 text-sm text-rose-700">{error}</div>}
 
-          <button
-            onClick={submit}
-            disabled={busy || uploading}
-            className="w-full py-3 bg-[#0B4635] hover:bg-[#0d5544] text-white text-sm font-display font-extrabold rounded-xl disabled:opacity-60 transition-all active:scale-[0.98]"
-          >
-            {busy ? 'Göndərilir…' : fee === 0 ? 'Təklifi göndər (pulsuz)' : `Təklifi göndər (−${formatCoin(fee)} coin)`}
+          {lowCoin && fee > 0 ? (
+            <button onClick={onNeedCoin} className="btn-cta w-full">
+              Coin çatmır, coin al
+            </button>
+          ) : (
+            <button onClick={submit} disabled={busy || uploading} className="btn-primary w-full text-base">
+              {busy ? 'Göndərilir…' : fee === 0 ? 'Təklifi göndər' : `Təklifi göndər (−${formatCoin(fee)} coin)`}
+            </button>
+          )}
+          <button type="button" onClick={onReport} className="w-full text-xs text-slate-400 hover:text-rose-500">
+            Sorğu barədə şikayət
           </button>
-          <p className="text-[10px] text-slate-400 text-center">
-            Alıcının nömrəsi yalnız təklifiniz seçiləndən sonra açılır.
-          </p>
         </div>
       )}
     </div>
@@ -617,66 +596,81 @@ function FeedCard({
 /* ====================================================================== */
 
 function MyBidCard({ bid }: { bid: MyBid }) {
-  const gap = bid.price_difference;
+  const gap = bid.price_difference != null ? Number(bid.price_difference) : null;
   let badge: { text: string; cls: string };
   let info: string | null = null;
+  let winner: number | null = null;
 
   if (bid.bid_status === 'accepted') {
-    badge = { text: 'Seçildi 🎉', cls: 'bg-emerald-50 text-emerald-700 border-emerald-200' };
-    info =
-      bid.deal_status === 'failed'
-        ? 'Alıcı razılaşmanın alınmadığını bildirdi.'
-        : 'Alıcı sizin təklifi seçdi və sizinlə əlaqə saxlayacaq. Satış bonusu hesabınıza əlavə olunub.';
-  } else if (bid.bid_status === 'rejected') {
-    badge = { text: 'Başqası seçildi', cls: 'bg-slate-100 text-slate-600 border-slate-200' };
-    if (bid.winning_price != null) {
-      const diff = gap != null ? Math.abs(Number(gap)) : null;
-      info = `Qazanan qiymət: ${formatPrice(bid.winning_price)}${
-        bid.winning_warranty ? ` (${bid.winning_warranty})` : ''
-      }${diff != null && diff > 0 ? ` · sizin təklif ${formatPrice(diff)} fərqli idi` : ''}.`;
+    badge = { text: 'Seçildi', cls: 'tag-green' };
+    info = 'Alıcı sizi seçdi və sizinlə əlaqə saxlayacaq. Satış bonusu hesabınıza yazıldı.';
+  } else if (bid.bid_status === 'rejected' && bid.deal_status === 'failed') {
+    badge = { text: 'Razılaşma alınmadı', cls: 'tag-rose' };
+    info = 'Alıcı ilə razılaşma alınmadı. Satış bonusu geri alındı.';
+  } else if (bid.bid_status === 'rejected' && bid.winning_price != null) {
+    badge = { text: 'Başqası seçildi', cls: 'tag' };
+    winner = Number(bid.winning_price);
+    if (gap != null && Math.abs(gap) > 0) {
+      info = `Sizin təklif ${formatPrice(Math.abs(gap))} ${gap > 0 ? 'baha' : 'ucuz'} idi${
+        bid.winning_warranty ? `, seçilən zəmanət: ${bid.winning_warranty}` : ''
+      }.`;
+    } else if (bid.winning_warranty) {
+      info = `Seçilən zəmanət: ${bid.winning_warranty}.`;
     }
+  } else if (bid.bid_status === 'rejected') {
+    badge = { text: 'Seçilmədi', cls: 'tag' };
   } else if (bid.bid_status === 'expired') {
-    badge = { text: 'Vaxtı bitib', cls: 'bg-slate-100 text-slate-500 border-slate-200' };
-    info = 'Alıcı seçmədi — ödədiyiniz coin geri qaytarıldı.';
+    badge = { text: 'Vaxtı bitib', cls: 'tag' };
+    info = 'Alıcı seçmədi. Coin geri qaytarıldı.';
   } else if (bid.request_status === 'active') {
-    badge = { text: 'Gözləyir', cls: 'bg-amber-50 text-[#9A5B00] border-amber-200' };
+    badge = { text: 'Gözləyir', cls: 'tag-amber' };
   } else {
-    badge = { text: 'Bağlanıb', cls: 'bg-slate-100 text-slate-500 border-slate-200' };
+    badge = { text: 'Bağlanıb', cls: 'tag' };
   }
 
   return (
-    <div className="rounded-2xl bg-white border border-slate-100 p-3.5 shadow-xs">
-      <div className="flex justify-between items-start gap-2">
+    <div className="card !p-4">
+      <div className="flex justify-between items-start gap-3">
         <div className="min-w-0">
-          <p className="text-xs font-bold text-slate-800">
+          <p className="text-[13px] font-bold text-slate-500">
             {bid.brand} {bid.model} {bid.year ?? ''}
           </p>
-          <p className="text-[11px] text-slate-600 mt-0.5">{bid.part_name}</p>
-          <p className="text-[10px] text-slate-400 mt-0.5">{formatTimeAgo(bid.bid_created_at)}</p>
+          <p className="font-display text-base font-extrabold text-slate-900 mt-0.5 leading-snug">{bid.part_name}</p>
+          <p className="text-xs text-slate-400 mt-1">{formatTimeAgo(bid.bid_created_at)}</p>
         </div>
         <div className="text-right flex-shrink-0">
-          <div className="font-display text-lg font-extrabold text-[#0B4635] leading-none">
-            {bid.price_type === 'from' && <span className="text-[10px] font-semibold text-slate-500">dən </span>}
+          <div className="text-[11px] text-slate-400">Sizin təklif</div>
+          <div className="font-display text-xl font-extrabold text-[#0B4635] leading-none mt-0.5">
+            {bid.price_type === 'from' && <span className="text-[11px] font-semibold text-slate-500">dən </span>}
             {formatPrice(bid.price_azn)}
           </div>
-          <span className={`inline-block mt-0.5 text-[10px] px-2 py-0.5 rounded-full font-bold border ${badge.cls}`}>
-            {badge.text}
-          </span>
+          <div className="mt-1.5">
+            <span className={badge.cls}>{badge.text}</span>
+          </div>
         </div>
       </div>
-      <div className="text-[10px] text-slate-500 mt-1.5 flex items-center gap-1">
-        {bid.request_type === 'service'
-          ? `🔧 ${bid.city ?? ''}${bid.eta_hours ? ` · ~${etaLabel(bid.eta_hours)}` : ''}`
-          : CONDITION_LABELS[bid.condition] || bid.condition}{' '}
-        · {bid.warranty}
+
+      {winner != null && (
+        <div className="mt-3 flex items-center justify-between rounded-2xl bg-[#F4F7F4] px-3.5 py-2.5">
+          <span className="text-sm text-slate-500">Seçilən qiymət</span>
+          <span className="font-display text-xl font-extrabold text-slate-900">{formatPrice(winner)}</span>
+        </div>
+      )}
+
+      <div className="text-[13px] text-slate-500 mt-2.5 flex items-center gap-2 flex-wrap">
+        <span>
+          {bid.request_type === 'service'
+            ? `${bid.city ?? ''}${bid.eta_hours ? `, ~${etaLabel(bid.eta_hours)}` : ''}`
+            : CONDITION_LABELS[bid.condition] || bid.condition}
+          {bid.warranty ? `, ${bid.warranty}` : ''}
+        </span>
         {bid.bid_status === 'pending' && bid.request_status === 'active' && (
-          <span className="ml-auto flex items-center gap-1 text-[#9A5B00] font-semibold">
-            <Clock className="w-3 h-3" />
-            <Countdown expiresAt={bid.request_expires_at} />
+          <span className="ml-auto font-semibold text-[#9A5B00]">
+            <Countdown expiresAt={bid.request_expires_at} /> qalıb
           </span>
         )}
       </div>
-      {info && <p className="text-[11px] text-slate-600 mt-1.5 bg-slate-50 rounded-lg px-2.5 py-1.5">{info}</p>}
+      {info && <p className="text-sm text-slate-600 mt-2.5">{info}</p>}
     </div>
   );
 }
@@ -688,7 +682,7 @@ function MyBidCard({ bid }: { bid: MyBid }) {
 function Stats({ bids, onUpgrade }: { bids: MyBid[]; onUpgrade: () => void }) {
   const s = useMemo(() => {
     const won = bids.filter((b) => b.bid_status === 'accepted').length;
-    const lost = bids.filter((b) => b.bid_status === 'rejected');
+    const lost = bids.filter((b) => b.bid_status === 'rejected' && b.winning_price != null);
     const decided = won + lost.length;
     const rate = decided > 0 ? Math.round((won / decided) * 100) : null;
     const gaps = lost
@@ -700,20 +694,20 @@ function Stats({ bids, onUpgrade }: { bids: MyBid[]; onUpgrade: () => void }) {
 
   return (
     <div className="space-y-3">
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-3 gap-2.5">
         <StatTile label="Təklif" value={String(s.total)} />
         <StatTile label="Satış" value={String(s.won)} />
         <StatTile label="Qazanma" value={s.rate == null ? '—' : `${s.rate}%`} />
       </div>
 
-      <div className="rounded-2xl bg-white border border-slate-100 p-3.5 shadow-xs">
-        <h3 className="text-xs font-bold text-slate-800">Qiymət məsləhəti</h3>
-        <p className="text-[11px] text-slate-600 mt-1.5">
+      <div className="card">
+        <h3 className="font-display text-base font-extrabold text-slate-900">Qiymət məsləhəti</h3>
+        <p className="text-sm text-slate-600 mt-1.5">
           {s.avgGap != null
             ? `Uduzduğunuz sorğularda qazanan qiymətdən orta hesabla ${formatPrice(
                 Math.round(s.avgGap * 100) / 100
-              )} fərqli olmusunuz. Qeyd və zəmanətlə fərqlənin, lazım gələndə qiyməti bu qədər düzəldin.`
-            : 'Başqa mağaza seçiləndə, qazanan qiymətlə aranızdakı fərq burada görünəcək.'}
+              )} fərqli olmusunuz.`
+            : 'Başqa mağaza seçiləndə, qazanan qiymətlə fərq burada görünəcək.'}
         </p>
       </div>
 
@@ -724,9 +718,9 @@ function Stats({ bids, onUpgrade }: { bids: MyBid[]; onUpgrade: () => void }) {
 
 function StatTile({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl bg-white border border-slate-100 p-3 text-center shadow-xs">
-      <div className="text-lg font-black text-[#0B4635]">{value}</div>
-      <div className="text-[10px] text-slate-500 font-medium mt-0.5">{label}</div>
+    <div className="card !p-3.5 text-center">
+      <div className="font-display text-2xl font-extrabold text-[#0B4635] leading-none">{value}</div>
+      <div className="text-xs text-slate-500 font-medium mt-1.5">{label}</div>
     </div>
   );
 }

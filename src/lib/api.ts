@@ -96,7 +96,7 @@ export async function markNotificationsRead(db: Db, userId: string): Promise<voi
 
 const REQUEST_SELECT =
   'id,request_type,city,area,on_site,provider_pref,' +
-  'buyer_tag,brand,model,year,vin,part_name,part_images,category,urgency,budget_azn,status,deal_status,' +
+  'buyer_tag,brand,model,year,vin,part_name,part_images,category,urgency,budget_azn,status,deal_status,sealed,' +
   'accepted_bid_id,expires_at,created_at,' +
   'bids(id,request_id,store_id,price_azn,price_type,eta_hours,images,condition,warranty,note,status,deal_status,created_at,' +
   'store:stores(id,name,grade,rating,review_count,verified,provider_type,mobile_service)),' +

@@ -73,7 +73,7 @@ function Shell() {
   const sellerReady = !seller.loading && !!seller.userId;
 
   return (
-    <div className="max-w-md mx-auto min-h-screen relative bg-[#EEF1EC] shadow-2xl overflow-hidden pb-24">
+    <div className="app-bg max-w-md mx-auto min-h-screen relative overflow-x-clip pb-24 md:shadow-2xl">
       <Navbar role={role} setRole={setRole} buyerUserId={buyer.userId} brands={brands} />
       <ToastContainer />
       <InstallPrompt />
@@ -92,20 +92,15 @@ function Shell() {
         {role === 'seller' &&
           (seller.loading ? (
             <div className="px-3 pt-4 max-w-md mx-auto">
-              <div className="rounded-2xl bg-white border border-slate-100 h-24 animate-pulse" />
+              <div className="skeleton h-24" />
             </div>
           ) : sellerReady && seller.store ? (
             <SellerPanel />
           ) : sellerReady ? (
             <div className="px-3 pt-4 max-w-md mx-auto">
-              <div className="rounded-3xl bg-white border border-slate-100 p-6 text-center shadow-xs">
-                <p className="text-xs font-bold text-slate-800">Mağaza profiliniz hələ tamamlanmayıb</p>
-                <p className="text-[11px] text-slate-500 mt-1">Təklif verməyə başlamaq üçün mağaza məlumatlarını doldurun.</p>
-                <button
-                  type="button"
-                  onClick={() => setCompleteProfile(true)}
-                  className="mt-3 px-4 py-2 bg-[#FF6B00] text-white text-xs font-bold rounded-xl"
-                >
+              <div className="card text-center">
+                <p className="font-display text-base font-extrabold text-slate-900">Mağaza profili tamamlanmayıb</p>
+                <button type="button" onClick={() => setCompleteProfile(true)} className="btn-cta mt-4 px-6">
                   Profili tamamla
                 </button>
               </div>
