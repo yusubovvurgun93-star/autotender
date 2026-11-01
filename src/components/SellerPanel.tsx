@@ -146,11 +146,11 @@ export function SellerPanel() {
   if (!store) return null;
 
   return (
-    <div className="text-slate-800 pb-36 pt-1 px-3 max-w-md mx-auto">
+    <div className="text-slate-800 pb-44 pt-1 px-3 max-w-md mx-auto">
       {/* Mağaza: ad, reytinq, dərəcə — coin yalnız yuxarıdakı düymədə göstərilir */}
       <div className="flex items-center justify-between gap-2 px-1 mb-3">
         <div className="min-w-0">
-          <h2 className="font-display text-2xl font-extrabold text-[#0B4635] truncate">{store.name}</h2>
+          <h2 className="font-display text-xl font-extrabold text-[#0B4635] truncate">{store.name}</h2>
           <div className="flex items-center gap-1.5 flex-wrap mt-1.5">
             {store.review_count > 0 || Number(store.rating) < 5 ? (
               <span className="tag-amber">
@@ -166,7 +166,7 @@ export function SellerPanel() {
         </div>
       </div>
 
-      {loadError && <div className="mb-3 rounded-2xl bg-amber-50 p-3 text-sm text-amber-800">{loadError}</div>}
+      {loadError && <div className="mb-3 rounded-2xl bg-amber-50 p-3 text-[13px] text-amber-800">{loadError}</div>}
 
       {/* ===== LENT ===== */}
       {tab === 'feed' && (
@@ -237,7 +237,7 @@ export function SellerPanel() {
           ) : (
             <div className="space-y-3">
               {pendingBids.length > 0 && (
-                <div className="text-sm font-semibold text-slate-500 px-1">Cavab gözləyən: {pendingBids.length}</div>
+                <div className="text-[13px] font-semibold text-slate-500 px-1">Cavab gözləyən: {pendingBids.length}</div>
               )}
               {myBids.map((b) => (
                 <MyBidCard key={b.bid_id} bid={b} />
@@ -258,10 +258,10 @@ export function SellerPanel() {
                 <div key={c.id} className="card !p-3.5">
                   <div className="flex justify-between items-start gap-3">
                     <div className="min-w-0">
-                      <p className="text-[13px] font-bold text-slate-500">
+                      <p className="text-xs font-bold text-slate-500">
                         {c.brand} {c.model} {c.year ?? ''}
                       </p>
-                      <p className="text-sm font-bold text-slate-900 mt-0.5">{c.part_name}</p>
+                      <p className="text-[13px] font-bold text-slate-900 mt-0.5">{c.part_name}</p>
                       <p className="text-xs text-slate-400 mt-1">
                         {requestCategoryLabel(c)}
                         {c.request_type === 'service' && c.city ? `, ${c.city}` : ''}, {formatTimeAgo(c.created_at)}
@@ -270,7 +270,7 @@ export function SellerPanel() {
                     <div className="text-right flex-shrink-0">
                       {c.accepted_price != null ? (
                         <>
-                          <div className="font-display text-lg font-extrabold text-[#0B4635] leading-none">
+                          <div className="font-display text-base font-extrabold text-[#0B4635] leading-none">
                             {formatPrice(c.accepted_price)}
                           </div>
                           <div className="text-[11px] text-slate-400 mt-1">satış qiyməti</div>
@@ -436,7 +436,7 @@ function FeedCard({
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-[13px] font-bold text-slate-500">
+            <span className="text-xs font-bold text-slate-500">
               {item.brand} {item.model} {item.year ?? ''}
             </span>
             <span className="tag">{requestCategoryLabel(item)}</span>
@@ -450,11 +450,11 @@ function FeedCard({
             )}
             {urg && item.urgency === 'express' && <span className="tag-rose">Təcili</span>}
           </div>
-          <p className="font-display text-xl font-extrabold text-[#0B4635] mt-1 leading-tight">{item.part_name}</p>
+          <p className="font-display text-lg font-extrabold text-[#0B4635] mt-1 leading-tight">{item.part_name}</p>
           {!isService && item.vin && <p className="text-xs font-mono text-slate-500 mt-1">VIN: {item.vin}</p>}
         </div>
         <div className="text-right flex-shrink-0">
-          <div className="font-display text-lg font-extrabold text-[#9A5B00] leading-none">
+          <div className="font-display text-base font-extrabold text-[#9A5B00] leading-none">
             <Countdown expiresAt={item.expires_at} />
           </div>
           <div className="text-[11px] text-slate-400 mt-1">qalıb</div>
@@ -463,25 +463,36 @@ function FeedCard({
 
       <PhotoStrip urls={item.part_images} />
 
-      <div className="flex items-center justify-between text-[13px] text-slate-500 mt-3">
+      <div className="flex items-center justify-between text-xs text-slate-500 mt-3">
         <span>Büdcə: {item.budget_azn ? formatPrice(item.budget_azn) : 'razılaşma ilə'}</span>
         <span>
           {item.bid_count}/5 təklif{item.slots_full ? ', dolub' : ''}
         </span>
       </div>
 
+      {alreadyBid || item.slots_full ? (
+        <button type="button" onClick={onReport} className="btn-ghost !text-rose-600 w-full mt-2">
+          Şikayət et
+        </button>
+      ) : null}
+
       {alreadyBid ? (
-        <div className="mt-3 rounded-2xl bg-emerald-50 px-3 py-2.5 text-sm font-semibold text-emerald-800 text-center">
+        <div className="mt-3 rounded-2xl bg-emerald-50 px-3 py-2.5 text-[13px] font-semibold text-emerald-800 text-center">
           Təklifiniz göndərilib
         </div>
       ) : item.slots_full ? (
-        <div className="mt-3 rounded-2xl bg-[#F4F7F4] px-3 py-2.5 text-sm font-semibold text-slate-500 text-center">
+        <div className="mt-3 rounded-2xl bg-[#F4F7F4] px-3 py-2.5 text-[13px] font-semibold text-slate-500 text-center">
           Təklif limiti dolub
         </div>
       ) : (
-        <button onClick={onToggle} className={`${open ? 'btn-ghost' : 'btn-cta'} w-full mt-3`}>
-          {open ? 'Bağla' : 'Qiymət ver'}
-        </button>
+        <div className="flex gap-2 mt-3">
+          <button onClick={onToggle} className={`${open ? 'btn-ghost' : 'btn-cta'} flex-1`}>
+            {open ? 'Bağla' : 'Qiymət ver'}
+          </button>
+          <button type="button" onClick={onReport} className="btn-ghost !text-rose-600">
+            Şikayət et
+          </button>
+        </div>
       )}
 
       {open && !alreadyBid && !item.slots_full && (
@@ -494,7 +505,7 @@ function FeedCard({
               value={price}
               onChange={(e) => setPrice(e.target.value)}
               placeholder="0"
-              className={`${inputCls} font-display text-xl font-bold`}
+              className={`${inputCls} font-display text-lg font-bold`}
             />
             {overBudget && (
               <p className="text-xs text-amber-700 mt-1.5">Alıcının büdcəsindən ({formatPrice(item.budget_azn)}) yüksəkdir.</p>
@@ -571,20 +582,17 @@ function FeedCard({
             hint={isService ? 'Şəkil (könüllü): əvvəlki işləriniz' : 'Şəkil (könüllü): sizdəki detal'}
           />
 
-          {error && <div className="rounded-2xl bg-rose-50 px-3.5 py-2.5 text-sm text-rose-700">{error}</div>}
+          {error && <div className="rounded-2xl bg-rose-50 px-3.5 py-2.5 text-[13px] text-rose-700">{error}</div>}
 
           {lowCoin && fee > 0 ? (
             <button onClick={onNeedCoin} className="btn-cta w-full">
               Coin çatmır, coin al
             </button>
           ) : (
-            <button onClick={submit} disabled={busy || uploading} className="btn-primary w-full text-base">
+            <button onClick={submit} disabled={busy || uploading} className="btn-primary w-full text-sm">
               {busy ? 'Göndərilir…' : fee === 0 ? 'Təklifi göndər' : `Təklifi göndər (−${formatCoin(fee)} coin)`}
             </button>
           )}
-          <button type="button" onClick={onReport} className="w-full text-xs text-slate-400 hover:text-rose-500">
-            Sorğu barədə şikayət
-          </button>
         </div>
       )}
     </div>
@@ -632,15 +640,15 @@ function MyBidCard({ bid }: { bid: MyBid }) {
     <div className="card !p-4">
       <div className="flex justify-between items-start gap-3">
         <div className="min-w-0">
-          <p className="text-[13px] font-bold text-slate-500">
+          <p className="text-xs font-bold text-slate-500">
             {bid.brand} {bid.model} {bid.year ?? ''}
           </p>
-          <p className="font-display text-base font-extrabold text-slate-900 mt-0.5 leading-snug">{bid.part_name}</p>
+          <p className="font-display text-sm font-extrabold text-slate-900 mt-0.5 leading-snug">{bid.part_name}</p>
           <p className="text-xs text-slate-400 mt-1">{formatTimeAgo(bid.bid_created_at)}</p>
         </div>
         <div className="text-right flex-shrink-0">
           <div className="text-[11px] text-slate-400">Sizin təklif</div>
-          <div className="font-display text-xl font-extrabold text-[#0B4635] leading-none mt-0.5">
+          <div className="font-display text-lg font-extrabold text-[#0B4635] leading-none mt-0.5">
             {bid.price_type === 'from' && <span className="text-[11px] font-semibold text-slate-500">dən </span>}
             {formatPrice(bid.price_azn)}
           </div>
@@ -652,12 +660,12 @@ function MyBidCard({ bid }: { bid: MyBid }) {
 
       {winner != null && (
         <div className="mt-3 flex items-center justify-between rounded-2xl bg-[#F4F7F4] px-3.5 py-2.5">
-          <span className="text-sm text-slate-500">Seçilən qiymət</span>
-          <span className="font-display text-xl font-extrabold text-slate-900">{formatPrice(winner)}</span>
+          <span className="text-[13px] text-slate-500">Seçilən qiymət</span>
+          <span className="font-display text-lg font-extrabold text-slate-900">{formatPrice(winner)}</span>
         </div>
       )}
 
-      <div className="text-[13px] text-slate-500 mt-2.5 flex items-center gap-2 flex-wrap">
+      <div className="text-xs text-slate-500 mt-2.5 flex items-center gap-2 flex-wrap">
         <span>
           {bid.request_type === 'service'
             ? `${bid.city ?? ''}${bid.eta_hours ? `, ~${etaLabel(bid.eta_hours)}` : ''}`
@@ -670,7 +678,7 @@ function MyBidCard({ bid }: { bid: MyBid }) {
           </span>
         )}
       </div>
-      {info && <p className="text-sm text-slate-600 mt-2.5">{info}</p>}
+      {info && <p className="text-[13px] text-slate-600 mt-2.5">{info}</p>}
     </div>
   );
 }
@@ -701,8 +709,8 @@ function Stats({ bids, onUpgrade }: { bids: MyBid[]; onUpgrade: () => void }) {
       </div>
 
       <div className="card">
-        <h3 className="font-display text-base font-extrabold text-slate-900">Qiymət məsləhəti</h3>
-        <p className="text-sm text-slate-600 mt-1.5">
+        <h3 className="font-display text-sm font-extrabold text-slate-900">Qiymət məsləhəti</h3>
+        <p className="text-[13px] text-slate-600 mt-1.5">
           {s.avgGap != null
             ? `Uduzduğunuz sorğularda qazanan qiymətdən orta hesabla ${formatPrice(
                 Math.round(s.avgGap * 100) / 100
@@ -719,7 +727,7 @@ function Stats({ bids, onUpgrade }: { bids: MyBid[]; onUpgrade: () => void }) {
 function StatTile({ label, value }: { label: string; value: string }) {
   return (
     <div className="card !p-3.5 text-center">
-      <div className="font-display text-2xl font-extrabold text-[#0B4635] leading-none">{value}</div>
+      <div className="font-display text-xl font-extrabold text-[#0B4635] leading-none">{value}</div>
       <div className="text-xs text-slate-500 font-medium mt-1.5">{label}</div>
     </div>
   );

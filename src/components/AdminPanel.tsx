@@ -73,8 +73,11 @@ export function AdminPanel() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'bids' }, debounced)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'in_app_notifications' }, debounced)
       .subscribe();
+    // Sifariş ləğvi/ödənişi realtime dinlənmir: 20 saniyədən bir yenilə
+    const poll = setInterval(() => void load(), 20000);
     return () => {
       if (t) clearTimeout(t);
+      clearInterval(poll);
       void sellerDb.removeChannel(channel);
     };
   }, [load]);
@@ -234,29 +237,29 @@ export function AdminPanel() {
   return (
     <div className="px-3 pt-1 pb-24 max-w-md mx-auto text-slate-800">
       {error && (
-        <div className="mb-2 rounded-2xl bg-rose-50 p-3 text-sm text-rose-700">{error}</div>
+        <div className="mb-2 rounded-2xl bg-rose-50 p-3 text-[13px] text-rose-700">{error}</div>
       )}
 
       <div className="grid grid-cols-2 gap-2 mb-4">
         {kpis.map(({ label, value, sub }) => (
           <div key={label} className="panel p-3">
             <span className="text-xs font-semibold text-slate-500">{label}</span>
-            <div className="font-display text-2xl font-extrabold text-slate-900 mt-1 leading-none">{value}</div>
+            <div className="font-display text-xl font-extrabold text-slate-900 mt-1 leading-none">{value}</div>
             <div className="text-xs text-slate-400 mt-0.5">{sub}</div>
           </div>
         ))}
       </div>
 
       {/* Şikayətlər */}
-      <h2 className="font-display text-lg font-extrabold text-[#0B4635] px-1 mb-2">
+      <h2 className="font-display text-base font-extrabold text-[#0B4635] px-1 mb-2">
         Şikayətlər ({reports.length})
       </h2>
       <div className="panel divide-y divide-black/5 mb-4">
         {reports.length === 0 ? (
-          <p className="p-3 text-[13px] text-slate-400">Açıq şikayət yoxdur.</p>
+          <p className="p-3 text-xs text-slate-400">Açıq şikayət yoxdur.</p>
         ) : (
           reports.map((rp) => (
-            <div key={rp.id} className="p-2.5 text-[13px]">
+            <div key={rp.id} className="p-2.5 text-xs">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
                   <div className="font-semibold text-slate-800">
@@ -267,7 +270,7 @@ export function AdminPanel() {
                     {formatTimeAgo(rp.created_at)}
                     {rp.kind === 'store' && rp.store_total_reports ? ` · bu mağaza üzrə cəmi ${rp.store_total_reports} şikayət` : ''}
                   </div>
-                  {rp.details && <div className="text-[13px] text-slate-600 mt-1">“{rp.details}”</div>}
+                  {rp.details && <div className="text-xs text-slate-600 mt-1">“{rp.details}”</div>}
                 </div>
               </div>
               <div className="flex gap-1.5 mt-2 flex-wrap">
@@ -296,18 +299,18 @@ export function AdminPanel() {
       {/* Gəlir və sifarişlər */}
       {billing && (
         <>
-          <h2 className="font-display text-lg font-extrabold text-[#0B4635] px-1 mb-2">
+          <h2 className="font-display text-base font-extrabold text-[#0B4635] px-1 mb-2">
             Gəlir və sifarişlər
           </h2>
           <div className="grid grid-cols-2 gap-2 mb-2.5">
             <div className="panel p-3">
               <div className="text-xs font-semibold text-slate-500 uppercase">Gəlir (30 gün)</div>
-              <div className="text-xl font-black text-[#0B4635] mt-1">{formatPrice(billing.revenue_30d)}</div>
+              <div className="text-lg font-black text-[#0B4635] mt-1">{formatPrice(billing.revenue_30d)}</div>
               <div className="text-xs text-slate-400">cəmi {formatPrice(billing.revenue_total)}</div>
             </div>
             <div className="panel p-3">
               <div className="text-xs font-semibold text-slate-500 uppercase">Abunələr</div>
-              <div className="text-xl font-black text-slate-900 mt-1">
+              <div className="text-lg font-black text-slate-900 mt-1">
                 {billing.active_plus} Plus · {billing.active_pro} Pro
               </div>
               <div className="text-xs text-slate-400">{billing.pending_orders} gözləyən sifariş</div>
@@ -316,10 +319,10 @@ export function AdminPanel() {
 
           <div className="panel divide-y divide-black/5 mb-4">
             {orders.length === 0 ? (
-              <p className="p-3 text-[13px] text-slate-400">Sifariş yoxdur.</p>
+              <p className="p-3 text-xs text-slate-400">Sifariş yoxdur.</p>
             ) : (
               orders.slice(0, 20).map((o) => (
-                <div key={o.id} className="p-2.5 text-[13px]">
+                <div key={o.id} className="p-2.5 text-xs">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
                       <div className="font-semibold text-slate-800 truncate">
@@ -339,7 +342,7 @@ export function AdminPanel() {
                           : 'bg-slate-100 text-slate-500'
                       }`}
                     >
-                      {o.status === 'pending' ? 'Gözləyir' : o.status === 'paid' ? 'Ödənilib' : 'Ləğv'}
+                      {o.status === 'pending' ? 'Gözləyir' : o.status === 'paid' ? 'Ödənilib' : 'Satıcı ləğv etdi'}
                     </span>
                   </div>
                   {o.status !== 'paid' && (
@@ -347,7 +350,7 @@ export function AdminPanel() {
                       <button
                         disabled={busyId === o.id}
                         onClick={() => void confirmOrder(o)}
-                        className="flex-[2] py-1.5 bg-[#0B4635] text-white text-[13px] font-bold rounded-lg disabled:opacity-50"
+                        className="flex-[2] py-1.5 bg-[#0B4635] text-white text-xs font-bold rounded-lg disabled:opacity-50"
                       >
                         Ödənişi təsdiqlə
                       </button>
@@ -355,7 +358,7 @@ export function AdminPanel() {
                         <button
                           disabled={busyId === o.id}
                           onClick={() => void cancelOrder(o)}
-                          className="flex-1 py-1.5 bg-slate-100 text-slate-600 text-[13px] font-bold rounded-lg disabled:opacity-50"
+                          className="flex-1 py-1.5 bg-slate-100 text-slate-600 text-xs font-bold rounded-lg disabled:opacity-50"
                         >
                           Ləğv et
                         </button>
@@ -367,10 +370,10 @@ export function AdminPanel() {
             )}
           </div>
 
-          <h2 className="font-display text-lg font-extrabold text-[#0B4635] px-1 mb-2">Qiymətlər və mətnlər</h2>
+          <h2 className="font-display text-base font-extrabold text-[#0B4635] px-1 mb-2">Qiymətlər və mətnlər</h2>
           <div className="panel p-3 mb-4 space-y-2.5">
             {billing.catalog.map((c) => (
-              <div key={c.key} className="flex items-center gap-2 text-[13px]">
+              <div key={c.key} className="flex items-center gap-2 text-xs">
                 <span className="flex-1 font-semibold text-slate-700">{c.title}</span>
                 <input
                   type="number"
@@ -401,7 +404,7 @@ export function AdminPanel() {
               return (
                 <div key={key}>
                   {noCard && (
-                    <div className="mb-2 rounded-2xl bg-amber-50 p-3 text-sm text-amber-900">
+                    <div className="mb-2 rounded-2xl bg-amber-50 p-3 text-[13px] text-amber-900">
                       Kart nömrəsi yazılmayıb. Satıcılar ödəniş edə bilməyəcək. Aşağıya kart nömrəsini və kart sahibinin adını yazıb Saxla düyməsinə basın.
                     </div>
                   )}
@@ -442,7 +445,7 @@ export function AdminPanel() {
       )}
 
       {/* Mağazalar */}
-      <h2 className="font-display text-lg font-extrabold text-[#0B4635] px-1 mb-2">
+      <h2 className="font-display text-base font-extrabold text-[#0B4635] px-1 mb-2">
         Mağazalar ({stores.length})
       </h2>
       <div className="space-y-2 mb-4">
@@ -471,8 +474,8 @@ export function AdminPanel() {
                 </div>
               </div>
               <div className="text-right flex-shrink-0">
-                <div className="text-sm font-black text-[#0B4635]">{formatCoin(s.coin_balance)}</div>
-                <div className="text-[13px] text-slate-400">coin</div>
+                <div className="text-[13px] font-black text-[#0B4635]">{formatCoin(s.coin_balance)}</div>
+                <div className="text-xs text-slate-400">coin</div>
               </div>
             </div>
 
@@ -505,7 +508,7 @@ export function AdminPanel() {
                   key={d}
                   disabled={busyId === s.id}
                   onClick={() => void adjust(s, d)}
-                  className="flex-1 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 text-[13px] font-bold text-slate-700 flex items-center justify-center gap-0.5 disabled:opacity-50"
+                  className="flex-1 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-700 flex items-center justify-center gap-0.5 disabled:opacity-50"
                 >
                   {d > 0 ? `+${d}` : `−${Math.abs(d)}`}
                 </button>
@@ -513,7 +516,7 @@ export function AdminPanel() {
               <button
                 disabled={busyId === s.id}
                 onClick={() => void toggleVerified(s)}
-                className={`flex-[1.5] py-1.5 rounded-lg text-[13px] font-bold border disabled:opacity-50 ${
+                className={`flex-[1.5] py-1.5 rounded-lg text-xs font-bold border disabled:opacity-50 ${
                   s.verified
                     ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
                     : 'bg-white border-slate-200 text-slate-600'
@@ -527,13 +530,13 @@ export function AdminPanel() {
       </div>
 
       {/* Son sorğular */}
-      <h2 className="font-display text-lg font-extrabold text-[#0B4635] px-1 mb-2">Son sorğular</h2>
+      <h2 className="font-display text-base font-extrabold text-[#0B4635] px-1 mb-2">Son sorğular</h2>
       <div className="panel divide-y divide-black/5 mb-4">
         {requests.length === 0 ? (
-          <p className="p-3 text-[13px] text-slate-400">Sorğu yoxdur.</p>
+          <p className="p-3 text-xs text-slate-400">Sorğu yoxdur.</p>
         ) : (
           requests.map((r) => (
-            <div key={r.id} className="p-2.5 flex items-center justify-between gap-2 text-[13px]">
+            <div key={r.id} className="p-2.5 flex items-center justify-between gap-2 text-xs">
               <div className="min-w-0">
                 <div className="font-semibold text-slate-800 truncate">
                   {r.brand} {r.model} — {r.part_name}
@@ -549,13 +552,13 @@ export function AdminPanel() {
       </div>
 
       {/* Son təkliflər */}
-      <h2 className="font-display text-lg font-extrabold text-[#0B4635] px-1 mb-2">Son təkliflər</h2>
+      <h2 className="font-display text-base font-extrabold text-[#0B4635] px-1 mb-2">Son təkliflər</h2>
       <div className="panel divide-y divide-black/5">
         {bids.length === 0 ? (
-          <p className="p-3 text-[13px] text-slate-400">Təklif yoxdur.</p>
+          <p className="p-3 text-xs text-slate-400">Təklif yoxdur.</p>
         ) : (
           bids.map((b) => (
-            <div key={b.id} className="p-2.5 flex items-center justify-between gap-2 text-[13px]">
+            <div key={b.id} className="p-2.5 flex items-center justify-between gap-2 text-xs">
               <div className="min-w-0">
                 <div className="font-semibold text-slate-800 truncate">{b.store?.name ?? 'Mağaza'}</div>
                 <div className="text-xs text-slate-400">{formatTimeAgo(b.created_at)}</div>

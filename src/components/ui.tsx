@@ -62,12 +62,12 @@ export function Stars({
 
 /** Mağaza adı + etibar göstəriciləri: təsdiq, reytinq (və ya "Yeni"), dərəcə */
 export function StoreBadge({ store }: { store: PublicStore | null; tone?: 'green' | 'orange' }) {
-  if (!store) return <span className="text-sm font-bold text-slate-800">Partnyor mağaza</span>;
+  if (!store) return <span className="text-[13px] font-bold text-slate-800">Partnyor mağaza</span>;
   const rated = store.review_count > 0 || Number(store.rating) < 5;
   return (
     <div className="min-w-0">
       <div className="flex items-center gap-1.5">
-        <span className="text-sm font-bold text-slate-900 truncate">{store.name}</span>
+        <span className="text-[13px] font-bold text-slate-900 truncate">{store.name}</span>
         {store.verified && <ShieldCheck className="w-4 h-4 flex-shrink-0 text-[#13694f]" aria-label="Təsdiqlənib" />}
       </div>
       <div className="flex items-center gap-1.5 text-[11px] text-slate-500 mt-1 flex-wrap">
@@ -91,21 +91,59 @@ export function StoreBadge({ store }: { store: PublicStore | null; tone?: 'green
   );
 }
 
+/** Şəkli tətbiqin içində böyük göstərir (yeni tab açmır). Bir neçə şəkil varsa, düymələrlə keçid. */
+export function Lightbox({ urls, start, alt, onClose }: { urls: string[]; start: number; alt: string; onClose: () => void }) {
+  const [i, setI] = useState(start);
+  useEffect(() => {
+    lockScroll();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowRight') setI((n) => Math.min(urls.length - 1, n + 1));
+      if (e.key === 'ArrowLeft') setI((n) => Math.max(0, n - 1));
+    };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      unlockScroll();
+    };
+  }, [onClose, urls.length]);
+  return (
+    <div className="fixed inset-0 z-[80] flex items-center justify-center bg-[#06241B]/90 backdrop-blur-sm" onClick={onClose} role="dialog" aria-label={alt}>
+      <img src={urls[i]} alt={alt} className="max-h-[82vh] max-w-[94vw] rounded-2xl object-contain shadow-2xl" onClick={(e) => e.stopPropagation()} />
+      <button onClick={onClose} aria-label="Bağla" className="absolute right-3 h-10 w-10 rounded-full bg-white/15 text-white flex items-center justify-center" style={{ top: 'max(12px, env(safe-area-inset-top))' }}>
+        <X className="w-5 h-5" />
+      </button>
+      {urls.length > 1 && (
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
+          <button onClick={() => setI(Math.max(0, i - 1))} disabled={i === 0} className="h-10 px-4 rounded-full bg-white/15 text-white text-[13px] font-bold disabled:opacity-30">
+            Əvvəlki
+          </button>
+          <span className="text-white/80 text-[13px] font-semibold">
+            {i + 1} / {urls.length}
+          </span>
+          <button onClick={() => setI(Math.min(urls.length - 1, i + 1))} disabled={i === urls.length - 1} className="h-10 px-4 rounded-full bg-white/15 text-white text-[13px] font-bold disabled:opacity-30">
+            Növbəti
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function PhotoStrip({ urls, alt = 'Şəkil' }: { urls: string[] | null | undefined; alt?: string }) {
+  const [open, setOpen] = useState<number | null>(null);
   if (!urls || urls.length === 0) return null;
   return (
-    <div className="flex flex-wrap gap-1.5 mt-2">
-      {urls.map((u) => (
-        <a key={u} href={u} target="_blank" rel="noreferrer" className="block">
-          <img
-            src={u}
-            alt={alt}
-            loading="lazy"
-            className="w-16 h-16 rounded-xl object-cover bg-slate-100"
-          />
-        </a>
-      ))}
-    </div>
+    <>
+      <div className="flex flex-wrap gap-1.5 mt-2">
+        {urls.map((u, idx) => (
+          <button key={u} type="button" onClick={() => setOpen(idx)} className="block" aria-label={`${alt} ${idx + 1} böyüt`}>
+            <img src={u} alt={alt} loading="lazy" className="w-16 h-16 rounded-xl object-cover bg-slate-100" />
+          </button>
+        ))}
+      </div>
+      {open !== null && <Lightbox urls={urls} start={open} alt={alt} onClose={() => setOpen(null)} />}
+    </>
   );
 }
 
@@ -120,8 +158,8 @@ export function EmptyState({
 }) {
   return (
     <div className="rounded-3xl bg-white/60 border-2 border-dashed border-[#0B4635]/15 p-7 text-center">
-      <h3 className="font-display text-base font-extrabold text-slate-800">{title}</h3>
-      {text && <p className="text-[13px] text-slate-500 mt-1 max-w-[17rem] mx-auto">{text}</p>}
+      <h3 className="font-display text-sm font-extrabold text-slate-800">{title}</h3>
+      {text && <p className="text-xs text-slate-500 mt-1 max-w-[17rem] mx-auto">{text}</p>}
       {action && (
         <button type="button" onClick={action.onClick} className="btn-cta mt-4 px-6">
           {action.label}
@@ -151,7 +189,7 @@ export function Chip({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`px-3.5 py-2 rounded-full text-[13px] font-semibold transition active:scale-95 ${
+      className={`px-3 py-1.5 rounded-full text-xs font-semibold transition active:scale-95 ${
         active ? on : 'bg-white text-slate-600 shadow-[0_0_0_1px_rgba(15,42,33,0.09)]'
       }`}
     >
@@ -160,14 +198,22 @@ export function Chip({
   );
 }
 
+/** Açıq pəncərələrin sayı: səhifə scroll-u yalnız hamısı bağlananda qaytarılır (bir pəncərə digərini açıq qoymasın) */
+let openSheets = 0;
+function lockScroll() {
+  openSheets += 1;
+  document.body.style.overflow = 'hidden';
+}
+function unlockScroll() {
+  openSheets = Math.max(0, openSheets - 1);
+  if (openSheets === 0) document.body.style.overflow = '';
+}
+
 /** Aşağıdan açılan şüşə pəncərə: ödəniş təlimatı, təsdiqlər və s. üçün */
 export function Sheet({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
   useEffect(() => {
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = prev;
-    };
+    lockScroll();
+    return unlockScroll;
   }, []);
   return (
     <div className="fixed inset-0 z-[60] flex items-end justify-center">
@@ -175,11 +221,11 @@ export function Sheet({ title, onClose, children }: { title: string; onClose: ()
       <div
         role="dialog"
         aria-label={title}
-        className="glass sheet-up relative w-full max-w-md max-h-[88vh] overflow-y-auto rounded-t-[32px] p-5 pb-8 bg-white/90"
+        className="glass sheet-up relative w-full max-w-md max-h-[88vh] overflow-y-auto rounded-t-[28px] p-4 bg-white/90"
         style={{ paddingBottom: 'max(32px, env(safe-area-inset-bottom))' }}
       >
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-display text-lg font-extrabold text-slate-900">{title}</h3>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-display text-base font-extrabold text-slate-900">{title}</h3>
           <button onClick={onClose} aria-label="Bağla" className="h-9 w-9 rounded-full bg-black/5 text-slate-600 flex items-center justify-center">
             <X className="w-4 h-4" />
           </button>

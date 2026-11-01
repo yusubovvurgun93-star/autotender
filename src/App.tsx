@@ -99,7 +99,7 @@ function Shell() {
           ) : sellerReady ? (
             <div className="px-3 pt-4 max-w-md mx-auto">
               <div className="card text-center">
-                <p className="font-display text-base font-extrabold text-slate-900">Mağaza profili tamamlanmayıb</p>
+                <p className="font-display text-sm font-extrabold text-slate-900">Mağaza profili tamamlanmayıb</p>
                 <button type="button" onClick={() => setCompleteProfile(true)} className="btn-cta mt-4 px-6">
                   Profili tamamla
                 </button>

@@ -21,7 +21,7 @@ export function ToastContainer() {
         <div key={toast.id} className="glass sheet-up pointer-events-auto flex items-start gap-3 rounded-2xl p-3.5 text-slate-800">
           <span className={`mt-1.5 h-2.5 w-2.5 rounded-full flex-shrink-0 ${dotMap[toast.type]}`} />
           <div className="flex-1 min-w-0">
-            <p className="font-display font-bold text-sm">{toast.title}</p>
+            <p className="font-display font-bold text-[13px]">{toast.title}</p>
             {toast.body && <p className="text-xs mt-0.5 text-slate-500">{toast.body}</p>}
           </div>
           <button

@@ -63,14 +63,14 @@ export function ReportModal({
 
   return (
     <Sheet title="Şikayət et" onClose={onClose}>
-      <p className="text-sm font-bold text-slate-800 mb-3">{targetName}</p>
+      <p className="text-[13px] font-bold text-slate-800 mb-3">{targetName}</p>
       <div className="space-y-1.5">
         {reasons.map(([k, label]) => (
           <button
             key={k}
             type="button"
             onClick={() => setReason(k)}
-            className={`w-full text-left px-4 py-3 rounded-2xl text-sm transition ${
+            className={`w-full text-left px-4 py-3 rounded-2xl text-[13px] transition ${
               reason === k ? 'bg-[#0B4635] text-white font-bold' : 'bg-[#F4F7F4] text-slate-700'
             }`}
           >
@@ -87,7 +87,7 @@ export function ReportModal({
         className="input mt-3"
       />
       {error && (
-        <div className="mt-3 rounded-2xl bg-rose-50 px-3.5 py-2.5 text-sm text-rose-700">{error}</div>
+        <div className="mt-3 rounded-2xl bg-rose-50 px-3.5 py-2.5 text-[13px] text-rose-700">{error}</div>
       )}
       <button
         onClick={send}
@@ -117,25 +117,6 @@ export function DataModal({
   const [typed, setTyped] = useState('');
   const [error, setError] = useState<string | null>(null);
 
-  const download = async () => {
-    setBusy(true);
-    setError(null);
-    try {
-      const data = await api.exportMyData(db);
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'autotender-melumatlarim.json';
-      a.click();
-      URL.revokeObjectURL(url);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Yüklənmədi.');
-    } finally {
-      setBusy(false);
-    }
-  };
-
   const remove = async () => {
     setBusy(true);
     setError(null);
@@ -151,19 +132,8 @@ export function DataModal({
 
   const word = 'SİL';
   return (
-    <Sheet title="Mənim məlumatlarım" onClose={onClose}>
-      <button
-        onClick={download}
-        disabled={busy}
-        className="btn-ghost w-full"
-      >
-        Məlumatlarımı yüklə (JSON)
-      </button>
-
-      <div className="mt-4 rounded-2xl bg-rose-50 p-4">
-        <h4 className="text-sm font-bold text-rose-700">
-          {who === 'buyer' ? 'Tarixçəmi və məlumatlarımı sil' : 'Hesabımı sil'}
-        </h4>
+    <Sheet title={who === 'buyer' ? 'Tarixçəni sil' : 'Mağaza hesabını sil'} onClose={onClose}>
+      <div className="rounded-2xl bg-rose-50 p-3.5">
         <p className="text-xs text-slate-600 mt-1.5">
           {who === 'buyer'
             ? 'Aktiv sorğularınız ləğv olunur, VIN və şəkillər sorğulardan silinir, cihazdakı kimliyiniz sıfırlanır. Bu geri qaytarılmır.'
@@ -192,7 +162,7 @@ export function DataModal({
               <button
                 onClick={remove}
                 disabled={busy || typed.trim().toLocaleUpperCase('az') !== word}
-                className="btn flex-1 py-2.5 text-[13px] bg-rose-600 text-white"
+                className="btn flex-1 py-2.5 text-xs bg-rose-600 text-white"
               >
                 {busy ? 'Silinir…' : 'Həmişəlik sil'}
               </button>
@@ -208,7 +178,7 @@ export function DataModal({
         )}
       </div>
       {error && (
-        <div className="mt-3 rounded-2xl bg-rose-50 px-3.5 py-2.5 text-sm text-rose-700">{error}</div>
+        <div className="mt-3 rounded-2xl bg-rose-50 px-3.5 py-2.5 text-[13px] text-rose-700">{error}</div>
       )}
     </Sheet>
   );

@@ -77,16 +77,16 @@ export function InstallPrompt() {
   return (
     <div className="glass sheet-up mx-3 mt-1 rounded-3xl p-3.5 flex items-start gap-3">
       <div className="min-w-0 flex-1">
-        <p className="font-display text-sm font-extrabold text-slate-900">Tətbiq kimi quraşdırın</p>
+        <p className="font-display text-[13px] font-extrabold text-slate-900">Tətbiq kimi quraşdırın</p>
         {deferred ? (
           <>
-            <p className="text-[13px] text-slate-500 mt-0.5">Ana ekrandan bir toxunuşla açın.</p>
-            <button onClick={install} className="btn-primary mt-2.5 !py-2 !px-5 !text-[13px]">
+            <p className="text-xs text-slate-500 mt-0.5">Ana ekrandan bir toxunuşla açın.</p>
+            <button onClick={install} className="btn-primary mt-2.5 !py-2 !px-5 !text-xs">
               Quraşdır
             </button>
           </>
         ) : (
-          <p className="text-[13px] text-slate-500 mt-0.5">
+          <p className="text-xs text-slate-500 mt-0.5">
             Safari-də “Paylaş” düyməsinə basın, sonra “Ana ekrana əlavə et” seçin.
           </p>
         )}

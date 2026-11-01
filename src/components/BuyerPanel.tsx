@@ -48,7 +48,7 @@ function Seg<T extends string>({
           type="button"
           onClick={() => onChange(o.key)}
           aria-pressed={value === o.key}
-          className={`flex-1 py-2.5 rounded-xl text-[13px] font-display font-bold transition ${
+          className={`flex-1 py-2.5 rounded-xl text-xs font-display font-bold transition ${
             value === o.key ? 'bg-white text-[#0B4635] shadow-sm' : 'text-slate-500'
           }`}
         >
@@ -297,8 +297,8 @@ export function BuyerPanel({ ready, userId, error, onRetry, brands }: Props) {
     return (
       <div className="px-3 pt-4 max-w-md mx-auto">
         <div className="card text-center">
-          <p className="font-display text-base font-extrabold text-rose-600">Sessiya açılmadı</p>
-          <p className="text-sm text-slate-500 mt-1">{error}</p>
+          <p className="font-display text-sm font-extrabold text-rose-600">Sessiya açılmadı</p>
+          <p className="text-[13px] text-slate-500 mt-1">{error}</p>
           <button type="button" onClick={onRetry} className="btn-primary mt-4">
             Yenidən cəhd et
           </button>
@@ -308,7 +308,7 @@ export function BuyerPanel({ ready, userId, error, onRetry, brands }: Props) {
   }
 
   return (
-    <div className="text-slate-800 pb-36 pt-1 px-3 max-w-md mx-auto">
+    <div className="text-slate-800 pb-44 pt-1 px-3 max-w-md mx-auto">
       {!ready || loading ? (
         <div className="space-y-3">
           {[1, 2].map((i) => (
@@ -317,7 +317,7 @@ export function BuyerPanel({ ready, userId, error, onRetry, brands }: Props) {
         </div>
       ) : (
         <>
-          {loadError && <div className="mb-3 rounded-2xl bg-amber-50 p-3 text-sm text-amber-800">{loadError}</div>}
+          {loadError && <div className="mb-3 rounded-2xl bg-amber-50 p-3 text-[13px] text-amber-800">{loadError}</div>}
 
           {/* ===== AKTİV ===== */}
           {tab === 'active' && (
@@ -330,7 +330,7 @@ export function BuyerPanel({ ready, userId, error, onRetry, brands }: Props) {
                 />
               ) : (
                 <div className="space-y-3">
-                  <h2 className="font-display text-2xl font-extrabold text-[#0B4635] px-1">
+                  <h2 className="font-display text-xl font-extrabold text-[#0B4635] px-1">
                     Aktiv sorğular
                   </h2>
                   {activeRequests.map((req) => (
@@ -354,7 +354,7 @@ export function BuyerPanel({ ready, userId, error, onRetry, brands }: Props) {
           {/* ===== YENİ SORĞU ===== */}
           {tab === 'create' && (
             <div className="rise">
-              <h2 className="font-display text-2xl font-extrabold text-[#0B4635] px-1 mb-3">Nə lazımdır?</h2>
+              <h2 className="font-display text-xl font-extrabold text-[#0B4635] px-1 mb-3">Nə lazımdır?</h2>
               <div className="card space-y-3.5">
                 <Seg
                   value={kind}
@@ -495,7 +495,7 @@ export function BuyerPanel({ ready, userId, error, onRetry, brands }: Props) {
                         ))}
                       </div>
                     </div>
-                    <label className="flex items-center gap-2.5 text-sm text-slate-700 cursor-pointer">
+                    <label className="flex items-center gap-2.5 text-[13px] text-slate-700 cursor-pointer">
                       <input
                         type="checkbox"
                         checked={onSite}
@@ -540,10 +540,10 @@ export function BuyerPanel({ ready, userId, error, onRetry, brands }: Props) {
                   />
                 </div>
 
-                {formError && <div className="rounded-2xl bg-rose-50 px-3.5 py-2.5 text-sm text-rose-700">{formError}</div>}
+                {formError && <div className="rounded-2xl bg-rose-50 px-3.5 py-2.5 text-[13px] text-rose-700">{formError}</div>}
 
                 <div>
-                  <button type="button" onClick={handleCreate} disabled={submitting || uploading} className="btn-cta w-full text-base">
+                  <button type="button" onClick={handleCreate} disabled={submitting || uploading} className="btn-cta w-full text-sm">
                     {submitting ? 'Göndərilir…' : 'Sorğunu göndər'}
                   </button>
                   <p className="text-xs text-slate-400 text-center mt-2.5">Nömrəniz yalnız seçdiyiniz mağazaya açılır.</p>
@@ -555,7 +555,7 @@ export function BuyerPanel({ ready, userId, error, onRetry, brands }: Props) {
           {/* ===== TARİXÇƏ ===== */}
           {tab === 'history' && (
             <div className="rise">
-              <h2 className="font-display text-2xl font-extrabold text-[#0B4635] px-1 mb-3">Tarixçə</h2>
+              <h2 className="font-display text-xl font-extrabold text-[#0B4635] px-1 mb-3">Tarixçə</h2>
               {(hasSvcHistory && hasPartHistory) || historyType !== 'all' ? (
                 <div className="chips mb-2">
                   {(
@@ -646,7 +646,7 @@ export function BuyerPanel({ ready, userId, error, onRetry, brands }: Props) {
         <button
           onClick={() => setTab('create')}
           aria-current={tab === 'create'}
-          className="btn-cta !rounded-[22px] !py-3 px-5 mx-1 flex items-center gap-1.5 text-[13px]"
+          className="btn-cta !rounded-[22px] !py-3 px-5 mx-1 flex items-center gap-1.5 text-xs"
         >
           <Plus className="w-4 h-4" strokeWidth={3} />
           Yeni sorğu
@@ -705,7 +705,7 @@ function ActiveCard({
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-[13px] font-bold text-slate-500">
+            <span className="text-xs font-bold text-slate-500">
               {req.brand} {req.model} {req.year ?? ''}
             </span>
             <span className="tag">{requestCategoryLabel(req)}</span>
@@ -716,16 +716,16 @@ function ActiveCard({
               </span>
             )}
           </div>
-          <p className="font-display text-xl font-extrabold text-[#0B4635] mt-1 leading-tight">{req.part_name}</p>
+          <p className="font-display text-lg font-extrabold text-[#0B4635] mt-1 leading-tight">{req.part_name}</p>
         </div>
         <div className="text-right flex-shrink-0">
-          <div className="font-display text-3xl font-extrabold text-[#0B4635] leading-none">{bids.length}</div>
+          <div className="font-display text-2xl font-extrabold text-[#0B4635] leading-none">{bids.length}</div>
           <div className="text-[11px] text-slate-500 mt-1">təklif</div>
         </div>
       </div>
 
       {failedBefore && (
-        <p className="mt-2.5 rounded-2xl bg-amber-50 px-3 py-2 text-[13px] text-amber-900">
+        <p className="mt-2.5 rounded-2xl bg-amber-50 px-3 py-2 text-xs text-amber-900">
           {sealed
             ? 'Razılaşma alınmadı. Əvvəl təklif verən mağazalar arasından seçin.'
             : 'Razılaşma alınmadı. Sorğu yenidən bütün mağazalara açıldı.'}
@@ -734,7 +734,7 @@ function ActiveCard({
 
       <PhotoStrip urls={req.part_images} />
 
-      <div className="flex items-center justify-between text-[13px] text-slate-500 mt-3">
+      <div className="flex items-center justify-between text-xs text-slate-500 mt-3">
         <span>Büdcə: {req.budget_azn ? formatPrice(req.budget_azn) : 'razılaşma ilə'}</span>
         <span className="font-semibold text-[#9A5B00]">
           <Countdown expiresAt={req.expires_at} /> qalıb
@@ -748,27 +748,27 @@ function ActiveCard({
       {open && (
         <div className="space-y-2.5 mt-3">
           {bids.length === 0 ? (
-            <p className="text-sm text-slate-400 text-center py-2">Təklif gələndə burada görünəcək.</p>
+            <p className="text-[13px] text-slate-400 text-center py-2">Təklif gələndə burada görünəcək.</p>
           ) : (
             bids.map((b) => (
               <div key={b.id} className="card-flat !p-3.5">
                 <div className="flex items-start justify-between gap-3">
                   <StoreBadge store={b.store} />
                   <div className="text-right flex-shrink-0">
-                    <div className="font-display text-2xl font-extrabold text-[#0B4635] leading-none">
+                    <div className="font-display text-xl font-extrabold text-[#0B4635] leading-none">
                       {b.price_type === 'from' && <span className="text-[11px] font-semibold text-slate-500">dən </span>}
                       {formatPrice(b.price_azn)}
                     </div>
                     {b.id === cheapest && bids.length > 1 && <span className="tag-green mt-1.5">Ən ucuz</span>}
                   </div>
                 </div>
-                <div className="text-[13px] text-slate-500 mt-2">
+                <div className="text-xs text-slate-500 mt-2">
                   {req.request_type === 'service'
                     ? `${b.eta_hours ? `~${etaLabel(b.eta_hours)}` : 'Müddət razılaşma ilə'}, ${b.warranty || 'zəmanətsiz'}`
                     : `${CONDITION_LABELS[b.condition] || b.condition}, ${b.warranty || 'zəmanətsiz'}`}
                 </div>
                 <PhotoStrip urls={b.images} alt="Mağazanın şəkli" />
-                {b.note && <div className="text-sm text-slate-700 mt-1.5">“{b.note}”</div>}
+                {b.note && <div className="text-[13px] text-slate-700 mt-1.5">“{b.note}”</div>}
 
                 {confirmBid === b.id ? (
                   <div className="mt-3 flex items-center gap-2">
@@ -784,8 +784,8 @@ function ActiveCard({
                     <button onClick={() => setConfirmBid(b.id)} className="btn-cta flex-1">
                       Seç
                     </button>
-                    <button type="button" onClick={() => onReport(b)} className="px-3 py-3 text-xs text-slate-400 hover:text-rose-500">
-                      Şikayət
+                    <button type="button" onClick={() => onReport(b)} className="btn-ghost !py-3 !text-rose-600">
+                      Şikayət et
                     </button>
                   </div>
                 )}
@@ -804,7 +804,7 @@ function ActiveCard({
                 </button>
               </div>
             ) : (
-              <button onClick={() => setConfirmCancel(true)} className="w-full text-sm text-slate-400 hover:text-rose-500 py-1.5">
+              <button onClick={() => setConfirmCancel(true)} className="w-full text-[13px] text-slate-400 hover:text-rose-500 py-1.5">
                 Sorğunu ləğv et
               </button>
             )}
@@ -900,10 +900,10 @@ function HistoryCard({
       <button type="button" onClick={onToggle} className="w-full text-left">
         <div className="flex justify-between items-start gap-3">
           <div className="min-w-0">
-            <p className="text-[13px] font-bold text-slate-500">
+            <p className="text-xs font-bold text-slate-500">
               {req.brand} {req.model} {req.year ?? ''}
             </p>
-            <p className="font-display text-base font-extrabold text-slate-900 mt-0.5 leading-snug">{req.part_name}</p>
+            <p className="font-display text-sm font-extrabold text-slate-900 mt-0.5 leading-snug">{req.part_name}</p>
             <p className="text-xs text-slate-400 mt-1">
               {formatTimeAgo(req.created_at)}
               {req.request_type === 'service' ? ', xidmət' : ''}
@@ -911,7 +911,7 @@ function HistoryCard({
           </div>
           <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
             {completed && price != null && (
-              <span className="font-display text-lg font-extrabold text-[#0B4635] leading-none">{formatPrice(price)}</span>
+              <span className="font-display text-base font-extrabold text-[#0B4635] leading-none">{formatPrice(price)}</span>
             )}
             {statusBadge}
           </div>
@@ -925,12 +925,7 @@ function HistoryCard({
               <div className="flex items-center justify-between mb-3">
                 <div className="min-w-0">
                   <span className="text-xs text-slate-400 block">Mağaza</span>
-                  <span className="text-sm font-bold text-slate-900">{storeName}</span>
-                  {acceptedBid && (
-                    <button type="button" onClick={() => onReport(acceptedBid)} className="ml-2 text-xs text-slate-400 hover:text-rose-500">
-                      Şikayət
-                    </button>
-                  )}
+                  <span className="text-[13px] font-bold text-slate-900">{storeName}</span>
                 </div>
                 {review && <Stars value={review.stars} size="sm" />}
               </div>
@@ -941,7 +936,7 @@ function HistoryCard({
                     href={whatsappUrl(contact.phone, contactText(req, contact.price))}
                     target="_blank"
                     rel="noreferrer"
-                    className="btn flex-[2] py-3 text-sm bg-[#25D366] text-white text-center shadow-[0_10px_20px_-10px_rgba(37,211,102,0.9)]"
+                    className="btn flex-[2] py-3 text-[13px] bg-[#25D366] text-white text-center shadow-[0_10px_20px_-10px_rgba(37,211,102,0.9)]"
                   >
                     WhatsApp-da yaz
                   </a>
@@ -950,9 +945,15 @@ function HistoryCard({
                   </a>
                 </div>
               ) : contactError ? (
-                <p className="text-sm text-rose-600">{contactError}</p>
+                <p className="text-[13px] text-rose-600">{contactError}</p>
               ) : (
-                <p className="text-sm text-slate-400">Əlaqə məlumatı yüklənir…</p>
+                <p className="text-[13px] text-slate-400">Əlaqə məlumatı yüklənir…</p>
+              )}
+
+              {acceptedBid && (
+                <button type="button" onClick={() => onReport(acceptedBid)} className="btn-ghost !text-rose-600 w-full mt-2">
+                  Mağaza barədə şikayət et
+                </button>
               )}
 
               {!confirmed && mode === 'idle' && (
@@ -968,7 +969,7 @@ function HistoryCard({
 
               {!confirmed && mode === 'rate' && (
                 <div className="mt-3 card-flat text-center">
-                  <p className="text-sm font-semibold text-slate-700 mb-1.5">Mağazanı qiymətləndirin</p>
+                  <p className="text-[13px] font-semibold text-slate-700 mb-1.5">Mağazanı qiymətləndirin</p>
                   <div className="flex justify-center">
                     <Stars value={stars} onChange={setStars} size="lg" />
                   </div>
@@ -985,7 +986,7 @@ function HistoryCard({
 
               {!confirmed && mode === 'fail' && (
                 <div className="mt-3 rounded-2xl bg-amber-50 p-3.5">
-                  <p className="text-sm text-slate-800">
+                  <p className="text-[13px] text-slate-800">
                     {othersCount > 0
                       ? 'Sorğu əvvəl təklif verən digər mağazalara qayıdacaq. Onlardan seçə bilərsiniz.'
                       : 'Başqa təklif yoxdur. Sorğu yenidən bütün mağazalara açılacaq.'}
@@ -994,7 +995,7 @@ function HistoryCard({
                     <button onClick={() => setMode('idle')} className="btn-ghost flex-1 !bg-white">
                       Geri
                     </button>
-                    <button disabled={busy} onClick={() => void run(onFail)} className="btn-cta flex-1 !py-2.5 text-[13px]">
+                    <button disabled={busy} onClick={() => void run(onFail)} className="btn-cta flex-1 !py-2.5 text-xs">
                       Davam et
                     </button>
                   </div>
@@ -1003,7 +1004,7 @@ function HistoryCard({
 
               {confirmed && !review && (
                 <div className="mt-3 card-flat text-center">
-                  <p className="text-sm font-semibold text-slate-700 mb-1.5">Mağazanı qiymətləndirin</p>
+                  <p className="text-[13px] font-semibold text-slate-700 mb-1.5">Mağazanı qiymətləndirin</p>
                   <div className="flex justify-center">
                     <Stars value={stars} onChange={setStars} size="lg" />
                   </div>
@@ -1015,7 +1016,7 @@ function HistoryCard({
             </>
           ) : (
             <>
-              <p className="text-sm text-slate-500">
+              <p className="text-[13px] text-slate-500">
                 {req.status === 'expired'
                   ? pendingCount > 0
                     ? `Müddət bitdi, ${pendingCount} təklif seçilməmiş qaldı.`

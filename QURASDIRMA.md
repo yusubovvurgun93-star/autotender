@@ -80,7 +80,7 @@ Pilot mağazalara əllə plan vermək: mağaza kartındakı Free/Plus/Pro düym�
 - Qiymətləri istənilən vaxt SQL ilə dəyişin: `update billing_catalog set price_azn = 19, coins = 30 where key = 'plan_plus_30';`
 
 ## Dizayn
-Açıq, "şüşə" (glass) üslubu: üzən şəffaf başlıq və alt menyu, yumşaq yaşıl-sarı fon, ağ kartlar, iri qalın qiymət şrifti (Archivo), yuvarlaq düymələr. Heç yerdə yana sürüşdürmə yoxdur (seçimlər sətirlərə düzülür). Sorğu və təklif kartının üstündə qalan vaxt zolağı var. Coin balansı yalnız yuxarıdakı sarı düymədə göstərilir (toxunanda Hesab açılır). Şriftlər Google Fonts-dan yüklənir. Qeyd: dizayn real cihazda baxılmayıb, ilk açılışda telefonda yoxlayın.
+Logo: ₼ işarəli qiymət etiketi. Şəkillərə toxunanda tətbiqin içində böyük pəncərədə açılır. Menyuda yalnız "Tarixçəni sil" / "Mağaza hesabını sil" var (JSON yükləmə çıxarılıb). Açıq, "şüşə" (glass) üslubu: üzən şəffaf başlıq və alt menyu, yumşaq yaşıl-sarı fon, ağ kartlar, iri qalın qiymət şrifti (Archivo), yuvarlaq düymələr. Heç yerdə yana sürüşdürmə yoxdur (seçimlər sətirlərə düzülür). Sorğu və təklif kartının üstündə qalan vaxt zolağı var. Coin balansı yalnız yuxarıdakı sarı düymədə göstərilir (toxunanda Hesab açılır). Şriftlər Google Fonts-dan yüklənir. Qeyd: dizayn real cihazda baxılmayıb, ilk açılışda telefonda yoxlayın.
 
 ## E. Sınaq siyahısı (real telefonda)
 
@@ -93,7 +93,7 @@ Açıq, "şüşə" (glass) üslubu: üzən şəffaf başlıq və alt menyu, yum�
 7. İnternet kəsiləndə/zəifləyəndə səhifə donmur?
 8. Usta: qeydiyyatda "Usta" + xidmət + şəhər seçin; alıcıdan xidmət sorğusu göndərin; usta lentdə görür? Təklif + şəkil. Başqa şəhərdəki usta görmür?
 9. "Razılaşma alınmadı" basın: mağazanın reytinqi düşdü?
-10. Admin: menyuda Alıcı / Satıcı / Admin rejimləri arasında keçid işləyir? Ödəniş kartını yazın, satıcı hesabından sifariş verib "Ödəniş" pəncərəsini yoxlayın.
+10. Admin: menyuda "Alıcı rejiminə keç" / "Satıcı panelinə keç" / "Admin panelinə keç" düymələri işləyir? (Admin düyməsi yalnız adminə görünür, adi alıcı yalnız "Satıcı kimi qoşul" görür.) Ödəniş kartını yazın, satıcı hesabından sifariş verib "Ödəniş" pəncərəsini yoxlayın.
 
 ## Nə dəyişdi (qısa)
 - Coin, təklif qəbulu, bonus, geri qaytarma, vaxt bitməsi, ödəniş təsdiqi, plan — hamısı serverdə (RPC). Brauzerdən coin/plan dəyişmək mümkün deyil.

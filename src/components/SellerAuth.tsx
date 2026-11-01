@@ -229,8 +229,8 @@ export function SellerAuthModal({
               showCats={provider.offerings.includes('parts')}
             />
             {(termsUrl || privacyUrl) && (
-              <label className="flex items-start gap-2 text-sm text-slate-600 cursor-pointer">
-                <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} className="mt-0.5" />
+              <label className="flex items-start gap-2 text-[13px] text-slate-600 cursor-pointer">
+                <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} className="mt-0.5 h-4 w-4 accent-[#0B4635]" />
                 <span>
                   {termsUrl && (
                     <a href={termsUrl} target="_blank" rel="noreferrer" className="underline">
@@ -251,10 +251,10 @@ export function SellerAuthModal({
         )}
 
         {error && (
-          <div className="rounded-2xl bg-rose-50 px-3.5 py-2.5 text-sm text-rose-700">{error}</div>
+          <div className="rounded-2xl bg-rose-50 px-3.5 py-2.5 text-[13px] text-rose-700">{error}</div>
         )}
         {info && (
-          <div className="rounded-2xl bg-emerald-50 px-3.5 py-2.5 text-sm text-emerald-700">{info}</div>
+          <div className="rounded-2xl bg-emerald-50 px-3.5 py-2.5 text-[13px] text-emerald-700">{info}</div>
         )}
 
         <button
@@ -265,7 +265,7 @@ export function SellerAuthModal({
           {busy ? 'Gözləyin…' : mode === 'login' ? 'Daxil ol' : mode === 'register' ? 'Mağaza aç' : 'Link göndər'}
         </button>
 
-        <div className="flex items-center justify-between text-sm pt-1">
+        <div className="flex items-center justify-between text-[13px] pt-1">
           {mode === 'login' ? (
             <>
               <button type="button" className="text-slate-500 hover:text-slate-800" onClick={() => setMode('reset')}>
@@ -390,7 +390,7 @@ export function StoreProfileModal({
         )}
 
         {error && (
-          <div className="rounded-2xl bg-rose-50 px-3.5 py-2.5 text-sm text-rose-700">{error}</div>
+          <div className="rounded-2xl bg-rose-50 px-3.5 py-2.5 text-[13px] text-rose-700">{error}</div>
         )}
 
         <button

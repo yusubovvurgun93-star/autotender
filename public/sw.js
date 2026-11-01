@@ -3,7 +3,7 @@
    - Səhifə naviqasiyası: əvvəl şəbəkə, internet yoxdursa köhnə nüsxə.
    - Hash-li statik fayllar (/assets/...): əvvəl keş (dəyişməz fayllardır).
    Yeni versiya yerləşdirəndə VERSION-u dəyişmək lazım deyil: naviqasiya həmişə şəbəkədən yenilənir. */
-const VERSION = 'v1';
+const VERSION = 'v2';
 const SHELL = 'at-shell-' + VERSION;
 const ASSETS = 'at-assets-' + VERSION;
 

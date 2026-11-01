@@ -38,7 +38,7 @@ function catName(key: string): string {
 function Card({ title, children }: { title?: string; children: ReactNode }) {
   return (
     <div className="card">
-      {title && <h3 className="font-display text-base font-extrabold text-slate-900 mb-2.5">{title}</h3>}
+      {title && <h3 className="font-display text-sm font-extrabold text-slate-900 mb-2.5">{title}</h3>}
       {children}
     </div>
   );
@@ -105,7 +105,7 @@ export function TelegramCard({ botUsername }: { botUsername: string | undefined 
 
   return (
     <Card title="Telegram bildirişləri">
-      <p className="text-[13px] text-slate-500">Yeni sorğular və nəticələr telefonunuza Telegram-da düşür.</p>
+      <p className="text-xs text-slate-500">Yeni sorğular və nəticələr telefonunuza Telegram-da düşür.</p>
       {linked ? (
         <div className="mt-3 flex items-center justify-between gap-2">
           <span className="tag-green">Bağlıdır</span>
@@ -118,7 +118,7 @@ export function TelegramCard({ botUsername }: { botUsername: string | undefined 
           {busy ? 'Hazırlanır…' : 'Telegram-ı bağla'}
         </button>
       )}
-      {error && <p className="text-[13px] text-rose-600 mt-2">{error}</p>}
+      {error && <p className="text-xs text-rose-600 mt-2">{error}</p>}
     </Card>
   );
 }
@@ -202,7 +202,7 @@ export function AccountTab({
 
   if (!data) {
     return error ? (
-      <div className="rounded-2xl bg-rose-50 p-3 text-sm text-rose-700">{error}</div>
+      <div className="rounded-2xl bg-rose-50 p-3 text-[13px] text-rose-700">{error}</div>
     ) : (
       <div className="space-y-3">
         {[1, 2, 3].map((i) => (
@@ -219,10 +219,10 @@ export function AccountTab({
 
   return (
     <div className="space-y-3">
-      {error && <div className="rounded-2xl bg-rose-50 p-3 text-sm text-rose-700">{error}</div>}
+      {error && <div className="rounded-2xl bg-rose-50 p-3 text-[13px] text-rose-700">{error}</div>}
 
       <div className="px-1">
-        <h2 className="font-display text-2xl font-extrabold text-[#0B4635]">Hesab</h2>
+        <h2 className="font-display text-xl font-extrabold text-[#0B4635]">Hesab</h2>
         <div className="chips mt-2">
           <span className="tag-blue">{PLAN_LABELS[data.plan]}{planUntil ? `, ${planUntil}-dək` : ''}</span>
           <span className="tag">Təklif: {data.bid_fee === 0 ? 'pulsuz' : `−${formatCoin(data.bid_fee)} coin`}</span>
@@ -239,9 +239,9 @@ export function AccountTab({
               onClick={() => void order(c)}
               className="rounded-2xl bg-[#F4F7F4] p-3 text-center transition active:scale-95 hover:bg-[#E9F0EA] disabled:opacity-60"
             >
-              <div className="font-display text-2xl font-extrabold text-[#0B4635] leading-none">{formatCoin(c.coins)}</div>
+              <div className="font-display text-xl font-extrabold text-[#0B4635] leading-none">{formatCoin(c.coins)}</div>
               <div className="text-[11px] text-slate-400 mt-0.5">coin</div>
-              <div className="text-sm font-bold text-slate-900 mt-1.5">{formatPrice(c.price_azn)}</div>
+              <div className="text-[13px] font-bold text-slate-900 mt-1.5">{formatPrice(c.price_azn)}</div>
             </button>
           ))}
         </div>
@@ -258,19 +258,19 @@ export function AccountTab({
                 className={`rounded-2xl p-3.5 ${active ? 'bg-[#0B4635]/[0.07] ring-2 ring-[#0B4635]' : 'bg-[#F4F7F4]'}`}
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="font-display text-base font-extrabold text-slate-900">
+                  <span className="font-display text-sm font-extrabold text-slate-900">
                     {PLAN_LABELS[key]}
                     {active && <span className="tag-green ml-2 align-middle">Aktiv</span>}
                   </span>
                   {item && (
-                    <span className="font-display text-sm font-bold text-slate-800">
+                    <span className="font-display text-[13px] font-bold text-slate-800">
                       {formatPrice(item.price_azn)} / {item.days} gün
                     </span>
                   )}
                 </div>
                 <ul className="mt-2 space-y-1">
                   {PLAN_FEATURES[key].map((f) => (
-                    <li key={f} className="text-[13px] text-slate-600">
+                    <li key={f} className="text-xs text-slate-600">
                       {f}
                     </li>
                   ))}
@@ -298,7 +298,7 @@ export function AccountTab({
               return (
                 <div key={o.id} className="py-2.5 flex items-center justify-between gap-2">
                   <div className="min-w-0">
-                    <div className="text-sm font-semibold text-slate-900">
+                    <div className="text-[13px] font-semibold text-slate-900">
                       {o.title}, {formatPrice(o.amount_azn)}
                     </div>
                     <div className="text-xs text-slate-400 font-mono mt-0.5">
@@ -334,13 +334,13 @@ export function AccountTab({
 
       <Card title="Coin hərəkətləri">
         {ledger.length === 0 ? (
-          <p className="text-sm text-slate-400">Hələ hərəkət yoxdur.</p>
+          <p className="text-[13px] text-slate-400">Hələ hərəkət yoxdur.</p>
         ) : (
           <div className="divide-y divide-black/5">
             {ledger.map((l) => (
               <div key={l.id} className="py-2 flex items-center justify-between">
                 <div>
-                  <div className="text-sm text-slate-800 font-medium">{LEDGER_LABELS[l.type] ?? l.type}</div>
+                  <div className="text-[13px] text-slate-800 font-medium">{LEDGER_LABELS[l.type] ?? l.type}</div>
                   <div className="text-xs text-slate-400">{formatTimeAgo(l.created_at)}</div>
                 </div>
                 <span className={`font-display font-extrabold ${l.amount >= 0 ? 'text-emerald-600' : 'text-rose-500'}`}>
@@ -352,7 +352,7 @@ export function AccountTab({
         )}
       </Card>
 
-      <button onClick={() => void refreshAll()} className="w-full text-sm text-slate-400 py-1">
+      <button onClick={() => void refreshAll()} className="w-full text-[13px] text-slate-400 py-1">
         Yenilə
       </button>
 
@@ -385,7 +385,7 @@ async function copyText(text: string, what: string) {
 function Step({ n, title, children }: { n: number; title: string; children: ReactNode }) {
   return (
     <li className="flex gap-3">
-      <span className="h-7 w-7 flex-shrink-0 rounded-full bg-[#0B4635] text-white font-display font-extrabold text-sm flex items-center justify-center mt-0.5">
+      <span className="h-7 w-7 flex-shrink-0 rounded-full bg-[#0B4635] text-white font-display font-extrabold text-[13px] flex items-center justify-center mt-0.5">
         {n}
       </span>
       <div className="min-w-0 flex-1">
@@ -424,11 +424,11 @@ function PaymentSheet({
       <div className="rounded-3xl bg-[#0B4635] text-white p-4 flex items-center justify-between">
         <div>
           <div className="text-xs text-white/60">{title}</div>
-          <div className="font-display text-3xl font-extrabold leading-none mt-1">{formatPrice(amount)}</div>
+          <div className="font-display text-2xl font-extrabold leading-none mt-1">{formatPrice(amount)}</div>
         </div>
         <div className="text-right">
           <div className="text-xs text-white/60">Ödəniş kodu</div>
-          <div className="font-display text-xl font-extrabold text-[#FFC61A] mt-1 font-mono">{reference}</div>
+          <div className="font-display text-lg font-extrabold text-[#FFC61A] mt-1 font-mono">{reference}</div>
         </div>
       </div>
 
@@ -436,14 +436,14 @@ function PaymentSheet({
         <Step n={1} title="Məbləği karta köçürün">
           {card ? (
             <div className="rounded-2xl bg-[#F4F7F4] p-3.5">
-              <p className="text-sm text-slate-700 whitespace-pre-line">{instr}</p>
+              <p className="text-[13px] text-slate-700 whitespace-pre-line">{instr}</p>
               <button onClick={() => void copyText(card.replace(/\D/g, ''), 'Kart nömrəsi')} className="btn-soft mt-3 w-full">
                 Kart nömrəsini köçür
               </button>
             </div>
           ) : (
             <div className="rounded-2xl bg-amber-50 p-3.5">
-              <p className="text-sm text-amber-900">Kart məlumatı hələ əlavə olunmayıb. Dəstəyə yazın, kartı göndərəcəklər.</p>
+              <p className="text-[13px] text-amber-900">Kart məlumatı hələ əlavə olunmayıb. Dəstəyə yazın, kartı göndərəcəklər.</p>
               {waAsk && (
                 <a href={waAsk} target="_blank" rel="noreferrer" className="btn-cta mt-3 w-full">
                   Kartı WhatsApp-da istə
@@ -454,10 +454,10 @@ function PaymentSheet({
         </Step>
 
         <Step n={2} title="Köçürmənin izahına kodu yazın">
-          <p className="text-sm text-slate-500">Bank tətbiqində “Təyinat” və ya “Qeyd” xanasına:</p>
+          <p className="text-[13px] text-slate-500">Bank tətbiqində “Təyinat” və ya “Qeyd” xanasına:</p>
           <button
             onClick={() => void copyText(reference, 'Kod')}
-            className="mt-2 w-full rounded-2xl bg-[#F4F7F4] py-3 font-mono text-xl font-extrabold text-[#0B4635] active:scale-[0.98] transition"
+            className="mt-2 w-full rounded-2xl bg-[#F4F7F4] py-3 font-mono text-lg font-extrabold text-[#0B4635] active:scale-[0.98] transition"
           >
             {reference}
           </button>
@@ -465,13 +465,13 @@ function PaymentSheet({
         </Step>
 
         <Step n={3} title="Qəbzi bildirin">
-          <p className="text-sm text-slate-500">Təsdiqdən sonra {title.toLowerCase().includes('coin') ? 'coin' : 'plan'} hesabınıza əlavə olunur.</p>
+          <p className="text-[13px] text-slate-500">Təsdiqdən sonra {title.toLowerCase().includes('coin') ? 'coin' : 'plan'} hesabınıza əlavə olunur.</p>
           {waPaid ? (
-            <a href={waPaid} target="_blank" rel="noreferrer" className="btn mt-2 w-full py-3 text-sm bg-[#25D366] text-white shadow-[0_10px_20px_-10px_rgba(37,211,102,0.9)]">
+            <a href={waPaid} target="_blank" rel="noreferrer" className="btn mt-2 w-full py-3 text-[13px] bg-[#25D366] text-white shadow-[0_10px_20px_-10px_rgba(37,211,102,0.9)]">
               WhatsApp-da bildir
             </a>
           ) : (
-            <p className="text-sm text-slate-500 mt-1">Dəstək nömrəsi hələ əlavə olunmayıb.</p>
+            <p className="text-[13px] text-slate-500 mt-1">Dəstək nömrəsi hələ əlavə olunmayıb.</p>
           )}
         </Step>
       </ol>
@@ -499,8 +499,8 @@ function Bar({ value, max, tone = 'green' }: { value: number; max: number; tone?
 function Locked({ need, text, onUpgrade }: { need: 'Plus' | 'Pro'; text: string; onUpgrade: () => void }) {
   return (
     <div className="rounded-3xl border-2 border-dashed border-[#0B4635]/20 bg-white/60 p-5 text-center">
-      <p className="font-display text-base font-extrabold text-slate-900">{need} planında açılır</p>
-      <p className="text-[13px] text-slate-500 mt-1">{text}</p>
+      <p className="font-display text-sm font-extrabold text-slate-900">{need} planında açılır</p>
+      <p className="text-xs text-slate-500 mt-1">{text}</p>
       <button onClick={onUpgrade} className="btn-cta mt-3 px-6">
         {need}-a bax
       </button>
@@ -527,7 +527,7 @@ export function InsightsView({ onUpgrade }: { onUpgrade: () => void }) {
     };
   }, []);
 
-  if (error) return <div className="rounded-2xl bg-rose-50 p-3 text-sm text-rose-700">{error}</div>;
+  if (error) return <div className="rounded-2xl bg-rose-50 p-3 text-[13px] text-rose-700">{error}</div>;
   if (!data) return <div className="skeleton h-24" />;
 
   const market = data.market;
@@ -540,11 +540,11 @@ export function InsightsView({ onUpgrade }: { onUpgrade: () => void }) {
       <Card title="Bazar (son 30 gün)">
         <div className="grid grid-cols-2 gap-2 text-center">
           <div className="rounded-2xl bg-[#F4F7F4] p-3">
-            <div className="font-display text-xl font-extrabold text-[#0B4635]">{data.teaser.requests_30d}</div>
+            <div className="font-display text-lg font-extrabold text-[#0B4635]">{data.teaser.requests_30d}</div>
             <div className="text-xs text-slate-500">sizin markalara sorğu</div>
           </div>
           <div className="rounded-2xl bg-[#F4F7F4] p-3">
-            <div className="font-display text-xl font-extrabold text-[#0B4635]">{data.teaser.completed_30d}</div>
+            <div className="font-display text-lg font-extrabold text-[#0B4635]">{data.teaser.completed_30d}</div>
             <div className="text-xs text-slate-500">satışla bitən</div>
           </div>
         </div>
@@ -560,12 +560,12 @@ export function InsightsView({ onUpgrade }: { onUpgrade: () => void }) {
         <>
           <Card title="Kateqoriya üzrə bazar">
             {market.by_category.length === 0 ? (
-              <p className="text-[13px] text-slate-400">Hələ kifayət qədər məlumat yoxdur.</p>
+              <p className="text-xs text-slate-400">Hələ kifayət qədər məlumat yoxdur.</p>
             ) : (
               <div className="space-y-3">
                 {market.by_category.map((c) => (
                   <div key={c.category}>
-                    <div className="flex items-center justify-between text-[13px]">
+                    <div className="flex items-center justify-between text-xs">
                       <span className="font-semibold text-slate-800">{catName(c.category)}</span>
                       <span className="text-slate-500">{c.requests} sorğu</span>
                     </div>
@@ -585,14 +585,14 @@ export function InsightsView({ onUpgrade }: { onUpgrade: () => void }) {
           <Card title="Marka üzrə">
             <div className="divide-y divide-slate-100">
               {market.by_brand.map((b) => (
-                <div key={b.brand} className="py-1.5 flex items-center justify-between text-[13px]">
+                <div key={b.brand} className="py-1.5 flex items-center justify-between text-xs">
                   <span className="font-semibold text-slate-800">{b.brand}</span>
                   <span className="text-slate-500">
                     {b.requests} sorğu · orta satış {b.avg_win_price != null ? formatPrice(b.avg_win_price) : '—'}
                   </span>
                 </div>
               ))}
-              {market.by_brand.length === 0 && <p className="text-[13px] text-slate-400">Məlumat yoxdur.</p>}
+              {market.by_brand.length === 0 && <p className="text-xs text-slate-400">Məlumat yoxdur.</p>}
             </div>
             <p className="text-xs text-slate-400 mt-2">Orta qiymət ən azı 3 satış olanda göstərilir.</p>
           </Card>
@@ -610,15 +610,15 @@ export function InsightsView({ onUpgrade }: { onUpgrade: () => void }) {
           <Card title="Sizin qiymət mövqeyiniz">
             <div className="grid grid-cols-3 gap-2 text-center">
               <div className="rounded-2xl bg-[#F4F7F4] p-3">
-                <div className="font-display text-xl font-extrabold text-[#0B4635]">{pro.price_position.wins}</div>
+                <div className="font-display text-lg font-extrabold text-[#0B4635]">{pro.price_position.wins}</div>
                 <div className="text-xs text-slate-500">satış</div>
               </div>
               <div className="rounded-2xl bg-[#F4F7F4] p-3">
-                <div className="font-display text-xl font-extrabold text-slate-700">{pro.price_position.losses}</div>
+                <div className="font-display text-lg font-extrabold text-slate-700">{pro.price_position.losses}</div>
                 <div className="text-xs text-slate-500">uduzma</div>
               </div>
               <div className="rounded-2xl bg-[#F4F7F4] p-3">
-                <div className="font-display text-xl font-extrabold text-[#9A5B00]">
+                <div className="font-display text-lg font-extrabold text-[#9A5B00]">
                   {pro.price_position.avg_gap_pct != null ? `${pro.price_position.avg_gap_pct > 0 ? '+' : ''}${pro.price_position.avg_gap_pct}%` : '—'}
                 </div>
                 <div className="text-xs text-slate-500">uduzanda fərq</div>
@@ -627,7 +627,7 @@ export function InsightsView({ onUpgrade }: { onUpgrade: () => void }) {
             {pro.by_category_position.length > 0 && (
               <div className="mt-2.5 divide-y divide-slate-100">
                 {pro.by_category_position.map((c) => (
-                  <div key={c.category} className="py-1.5 flex items-center justify-between text-[13px]">
+                  <div key={c.category} className="py-1.5 flex items-center justify-between text-xs">
                     <span className="font-semibold text-slate-800">{catName(c.category)}</span>
                     <span className="text-slate-500">
                       {c.wins} satış / {c.losses} uduzma
@@ -644,11 +644,11 @@ export function InsightsView({ onUpgrade }: { onUpgrade: () => void }) {
 
           <Card title="Ən çox axtarılan detallar">
             {pro.top_parts.length === 0 ? (
-              <p className="text-[13px] text-slate-400">Hələ təkrarlanan axtarış yoxdur.</p>
+              <p className="text-xs text-slate-400">Hələ təkrarlanan axtarış yoxdur.</p>
             ) : (
               <div className="divide-y divide-slate-100">
                 {pro.top_parts.map((p) => (
-                  <div key={p.part} className="py-1.5 text-[13px]">
+                  <div key={p.part} className="py-1.5 text-xs">
                     <div className="flex items-center justify-between">
                       <span className="font-semibold text-slate-800 capitalize">{p.part}</span>
                       <span className="text-slate-500">{p.requests} sorğu</span>
@@ -685,13 +685,13 @@ export function InsightsView({ onUpgrade }: { onUpgrade: () => void }) {
           <Card title="Cavab sürəti">
             <div className="grid grid-cols-2 gap-2 text-center">
               <div className="rounded-2xl bg-[#F4F7F4] p-3">
-                <div className="font-display text-xl font-extrabold text-[#0B4635]">
+                <div className="font-display text-lg font-extrabold text-[#0B4635]">
                   {pro.response_speed.my_median_min != null ? `${pro.response_speed.my_median_min} dəq` : '—'}
                 </div>
                 <div className="text-xs text-slate-500">sizin orta cavab</div>
               </div>
               <div className="rounded-2xl bg-[#F4F7F4] p-3">
-                <div className="font-display text-xl font-extrabold text-[#9A5B00]">
+                <div className="font-display text-lg font-extrabold text-[#9A5B00]">
                   {pro.response_speed.winner_median_min != null ? `${pro.response_speed.winner_median_min} dəq` : '—'}
                 </div>
                 <div className="text-xs text-slate-500">qazanan təkliflərin orta cavabı</div>
@@ -701,11 +701,11 @@ export function InsightsView({ onUpgrade }: { onUpgrade: () => void }) {
 
           <Card title="Cavabsız qalan tələb (son 7 gün)">
             {pro.unanswered_7d.length === 0 ? (
-              <p className="text-[13px] text-slate-400">Cavabsız sorğu yoxdur.</p>
+              <p className="text-xs text-slate-400">Cavabsız sorğu yoxdur.</p>
             ) : (
               <div className="divide-y divide-slate-100">
                 {pro.unanswered_7d.map((u) => (
-                  <div key={u.brand} className="py-1.5 flex items-center justify-between text-[13px]">
+                  <div key={u.brand} className="py-1.5 flex items-center justify-between text-xs">
                     <span className="font-semibold text-slate-800">{u.brand}</span>
                     <span className="text-slate-500">{u.requests} sorğuya heç kim təklif verməyib</span>
                   </div>

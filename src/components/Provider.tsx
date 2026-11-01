@@ -36,9 +36,10 @@ export function ProviderFields({
   const hasService = value.offerings.includes('service');
 
   const setType = (t: ProviderType) => {
-    // Usta üçün ağlabatan ilkin seçim: yalnız xidmət
-    if (t === 'master' && hasParts && !hasService) onChange({ ...value, providerType: t, offerings: ['service'] });
-    else onChange({ ...value, providerType: t });
+    // Seçimə görə sahələr dəyişir: mağaza yalnız detal, usta yalnız xidmət, servis ikisini də göstərə bilər
+    if (t === 'shop') onChange({ ...value, providerType: t, offerings: ['parts'], mobile: false });
+    else if (t === 'master') onChange({ ...value, providerType: t, offerings: ['service'] });
+    else onChange({ ...value, providerType: t, offerings: hasService ? value.offerings : ['service'] });
   };
 
   const setOffering = (key: 'parts' | 'service') => {
@@ -62,23 +63,25 @@ export function ProviderFields({
                   : 'bg-[#F4F7F4] text-slate-600'
               }`}
             >
-              <div className="text-sm font-display font-bold">{p.label}</div>
+              <div className="text-[13px] font-display font-bold">{p.label}</div>
             </button>
           ))}
         </div>
       </div>
 
-      <div>
-        <label className="label">Nə təklif edirsiniz? *</label>
-        <div className="flex gap-1.5 flex-wrap">
-          <Chip tone="orange" active={hasParts} onClick={() => setOffering('parts')}>
-            Ehtiyat hissəsi satışı
-          </Chip>
-          <Chip tone="orange" active={hasService} onClick={() => setOffering('service')}>
-            Usta / servis xidməti
-          </Chip>
+      {value.providerType === 'service_center' && (
+        <div>
+          <label className="label">Nə təklif edirsiniz? *</label>
+          <div className="chips">
+            <Chip tone="orange" active={hasService} onClick={() => setOffering('service')}>
+              Xidmət
+            </Chip>
+            <Chip tone="orange" active={hasParts} onClick={() => setOffering('parts')}>
+              Ehtiyat hissəsi satışı
+            </Chip>
+          </div>
         </div>
-      </div>
+      )}
 
       {hasService && (
         <>
@@ -112,12 +115,12 @@ export function ProviderFields({
               ))}
             </div>
           </div>
-          <label className="flex items-start gap-2 text-sm text-slate-600 cursor-pointer">
+          <label className="flex items-start gap-2 text-[13px] text-slate-600 cursor-pointer">
             <input
               type="checkbox"
               checked={value.mobile}
               onChange={(e) => onChange({ ...value, mobile: e.target.checked })}
-              className="mt-0.5"
+              className="mt-0.5 h-4 w-4 accent-[#0B4635]"
             />
             <span>Müştərinin yanına gedirəm (yerində xidmət / çağırış)</span>
           </label>
